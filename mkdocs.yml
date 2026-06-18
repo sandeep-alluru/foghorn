@@ -1,8 +1,8 @@
-site_name: worldgit
+site_name: foghorn
 site_description: Decision staleness alerts for AI agents
-site_url: https://sandeep-alluru.github.io/worldgit
-repo_url: https://github.com/sandeep-alluru/worldgit
-repo_name: sandeep-alluru/worldgit
+site_url: https://sandeep-alluru.github.io/foghorn
+repo_url: https://github.com/sandeep-alluru/foghorn
+repo_name: sandeep-alluru/foghorn
 edit_uri: edit/main/docs/
 
 theme:
@@ -88,6 +88,6 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/sandeep-alluru/worldgit
+      link: https://github.com/sandeep-alluru/foghorn
     - icon: fontawesome/brands/python
-      link: https://pypi.org/project/worldgit/
+      link: https://pypi.org/project/foghorn/

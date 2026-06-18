@@ -1,11 +1,11 @@
 # MCP / Claude Integration
 
-worldgit ships an MCP server that exposes its core operations as native Claude tools.
+foghorn ships an MCP server that exposes its core operations as native Claude tools.
 
 ## Install
 
 ```bash
-pip install "worldgit[mcp]"
+pip install "foghorn[mcp]"
 ```
 
 ## Add to Claude Desktop
@@ -16,8 +16,8 @@ Edit `~/.config/claude/claude_desktop_config.json` (Linux) or
 ```json
 {
   "mcpServers": {
-    "worldgit": {
-      "command": "worldgit-mcp"
+    "foghorn": {
+      "command": "foghorn-mcp"
     }
   }
 }
@@ -35,4 +35,4 @@ After cloning the repo, these project-level commands are available:
 
 ## Smithery
 
-worldgit is listed on [smithery.ai](https://smithery.ai) — search for "worldgit" to install with one click.
+foghorn is listed on [smithery.ai](https://smithery.ai) — search for "foghorn" to install with one click.

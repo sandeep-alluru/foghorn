@@ -1,1 +1,1 @@
-"""Shared pytest fixtures for worldgit tests."""
+"""Shared pytest fixtures for foghorn tests."""

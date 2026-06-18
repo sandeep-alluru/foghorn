@@ -21,7 +21,7 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: ruff check src/ tests/
       - run: ruff format --check src/ tests/
-      - run: mypy src/worldgit/ --ignore-missing-imports
+      - run: mypy src/foghorn/ --ignore-missing-imports
       - run: pytest tests/ -v --tb=short
 
   build:

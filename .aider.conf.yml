@@ -1,10 +1,10 @@
-# aider configuration for worldgit
+# aider configuration for foghorn
 # https://aider.chat/docs/config/aider_conf.html
 
 read:
   - ARCHITECTURE.md
   - CLAUDE.md
-  - src/worldgit/__init__.py
+  - src/foghorn/__init__.py
 
 lint: true
 lint-cmd: "ruff check {files} && ruff format --check {files}"

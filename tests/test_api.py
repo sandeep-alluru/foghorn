@@ -1,4 +1,4 @@
-"""Tests for worldgit FastAPI REST endpoints."""
+"""Tests for foghorn FastAPI REST endpoints."""
 
 import pytest
 
@@ -6,7 +6,7 @@ pytest.importorskip("fastapi")
 
 from fastapi.testclient import TestClient
 
-from worldgit.api import app
+from foghorn.api import app
 
 client = TestClient(app)
 
@@ -19,7 +19,7 @@ def test_health_returns_ok():
 
 
 def test_app_title():
-    assert app.title == "worldgit API"
+    assert app.title == "foghorn API"
 
 
 def test_fact_endpoint_returns_fact(tmp_path):

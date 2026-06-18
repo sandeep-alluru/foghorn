@@ -1,5 +1,5 @@
 """
-worldgit demo — decision staleness alerts for AI agents.
+foghorn demo — decision staleness alerts for AI agents.
 
 Run with: python examples/demo.py
 """
@@ -7,14 +7,14 @@ Run with: python examples/demo.py
 import shutil
 import tempfile
 
-from worldgit.repo import WorldRepo
+from foghorn.repo import WorldRepo
 
 tmp = tempfile.mkdtemp()
 
 try:
     repo = WorldRepo.init(f"{tmp}/world.db")
 
-    print("=== worldgit demo ===\n")
+    print("=== foghorn demo ===\n")
 
     # Step 1: Record facts about the initial architecture
     f_redis = repo.add_fact("Redis", "is-appropriate-for", "rate-limiting", confidence=0.95)

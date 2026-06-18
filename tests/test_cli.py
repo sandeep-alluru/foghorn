@@ -6,8 +6,8 @@ import sys
 
 
 def run(args, db, check=True):
-    """Run worldgit CLI with the given args and a temp db."""
-    cmd = [sys.executable, "-m", "worldgit.cli", "--db", str(db), *args]
+    """Run foghorn CLI with the given args and a temp db."""
+    cmd = [sys.executable, "-m", "foghorn.cli", "--db", str(db), *args]
     result = subprocess.run(cmd, capture_output=True, text=True, check=False)  # noqa: S603
     if check and result.returncode != 0:
         raise AssertionError(

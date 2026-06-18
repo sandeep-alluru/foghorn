@@ -1,4 +1,4 @@
-# worldgit demo — generate with: vhs assets/demo.tape
+# foghorn demo — generate with: vhs assets/demo.tape
 # Install vhs: https://github.com/charmbracelet/vhs  (brew install vhs)
 
 Output assets/demo.gif
@@ -10,10 +10,10 @@ Set Padding 20
 Set PlaybackSpeed 1.0
 
 # Install
-Type "pip install worldgit" Sleep 500ms Enter
+Type "pip install foghorn" Sleep 500ms Enter
 Sleep 2s
 Ctrl+L
 
 # TODO: replace below with real demo commands for this project
-Type "worldgit --help" Sleep 300ms Enter
+Type "foghorn --help" Sleep 300ms Enter
 Sleep 3s

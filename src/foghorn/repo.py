@@ -1,24 +1,24 @@
-"""High-level WorldRepo — the main entry point for worldgit operations."""
+"""High-level WorldRepo — the main entry point for foghorn operations."""
 
 from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
 
-from worldgit.fact import Decision, Fact, StalenessAlert
-from worldgit.staleness import DiffResult, compute_staleness, diff_commits
-from worldgit.store import WorldCommit, WorldStore
+from foghorn.fact import Decision, Fact, StalenessAlert
+from foghorn.staleness import DiffResult, compute_staleness, diff_commits
+from foghorn.store import WorldCommit, WorldStore
 
 
 class WorldRepo:
-    """A worldgit repository: a versioned store of agent facts and decisions.
+    """A foghorn repository: a versioned store of agent facts and decisions.
 
     WorldRepo is the main user-facing API. It wraps WorldStore with the
     higher-level operations of a version-controlled knowledge base.
 
     Typical workflow::
 
-        repo = WorldRepo.init(".worldgit")
+        repo = WorldRepo.init(".foghorn")
         repo.add_fact("Redis", "is-appropriate-for", "rate-limiting")
         repo.decide("chose-redis", "Redis fits our rate-limiter needs",
                     depends_on=[...fact_ids...])
@@ -34,7 +34,7 @@ class WorldRepo:
         self.path = store.path
 
     @classmethod
-    def init(cls, path: str | Path = ".worldgit/world.db") -> WorldRepo:
+    def init(cls, path: str | Path = ".foghorn/world.db") -> WorldRepo:
         """Create or open a WorldRepo at the given path.
 
         Args:

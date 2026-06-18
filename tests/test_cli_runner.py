@@ -4,7 +4,7 @@ import json
 
 from click.testing import CliRunner
 
-from worldgit.cli import main
+from foghorn.cli import main
 
 
 def _db(tmp_path):
@@ -74,7 +74,7 @@ def test_stale_markdown(tmp_path):
     runner.invoke(main, ["--db", db, "commit", "-m", "first"])
     result = runner.invoke(main, ["--db", db, "stale", "--format", "markdown"])
     assert result.exit_code == 0
-    assert "worldgit" in result.output
+    assert "foghorn" in result.output
 
 
 def test_stale_exit_code_with_stale(tmp_path):
@@ -125,7 +125,7 @@ def test_diff_markdown(tmp_path):
     runner.invoke(main, ["--db", db, "commit", "-m", "second"])
     result = runner.invoke(main, ["--db", db, "diff", "--format", "markdown"])
     assert result.exit_code == 0
-    assert "worldgit diff" in result.output
+    assert "foghorn diff" in result.output
 
 
 def test_log_subcommand(tmp_path):

@@ -1,11 +1,11 @@
-# worldgit — Windsurf Rules
+# foghorn — Windsurf Rules
 
 ## Project overview
 Decision staleness alerts for AI agents
 
 ## Module map
 ```
-src/worldgit/
+src/foghorn/
 ├── # TODO: fill in after implementation
 ```
 

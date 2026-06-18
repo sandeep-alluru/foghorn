@@ -2,9 +2,9 @@
 
 import pytest
 
-from worldgit.fact import Decision, Fact
-from worldgit.staleness import compute_staleness, diff_commits
-from worldgit.store import WorldStore
+from foghorn.fact import Decision, Fact
+from foghorn.staleness import compute_staleness, diff_commits
+from foghorn.store import WorldStore
 
 
 @pytest.fixture

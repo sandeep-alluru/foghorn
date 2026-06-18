@@ -5,10 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from worldgit.fact import Fact, StalenessAlert
+from foghorn.fact import Fact, StalenessAlert
 
 if TYPE_CHECKING:
-    from worldgit.store import WorldCommit, WorldStore
+    from foghorn.store import WorldCommit, WorldStore
 
 
 @dataclass

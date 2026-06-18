@@ -55,4 +55,4 @@ template: |
 
   $CHANGES
 
-  **Full Changelog**: https://github.com/sandeep-alluru/worldgit/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+  **Full Changelog**: https://github.com/sandeep-alluru/foghorn/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION

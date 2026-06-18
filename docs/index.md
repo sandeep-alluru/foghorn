@@ -1,4 +1,4 @@
-# worldgit
+# foghorn
 
 **Decision staleness alerts for AI agents**
 
@@ -10,14 +10,14 @@
 ## Install
 
 ```bash
-pip install worldgit
+pip install foghorn
 ```
 
 ## Quick example
 
 ```bash
 # TODO: add real usage example
-worldgit --help
+foghorn --help
 ```
 
 ## Why

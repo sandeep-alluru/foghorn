@@ -1,9 +1,9 @@
-"""Tests for WorldStore and WorldCommit from worldgit.store."""
+"""Tests for WorldStore and WorldCommit from foghorn.store."""
 
 import pytest
 
-from worldgit.fact import Decision, Fact
-from worldgit.store import WorldStore
+from foghorn.fact import Decision, Fact
+from foghorn.store import WorldStore
 
 
 @pytest.fixture

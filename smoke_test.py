@@ -1,5 +1,5 @@
 """
-End-to-end smoke test for worldgit.
+End-to-end smoke test for foghorn.
 
 Simulates a user who just cloned the repo and wants to verify everything works.
 No mocking, no fixtures — real behaviour, real CLI, real HTTP server.
@@ -67,15 +67,15 @@ def run(name: str, fn):  # noqa: ANN001
 section("1. Package import")
 
 def _test_import_version():
-    import worldgit
-    assert worldgit.__version__, "__version__ is empty"
-    assert worldgit.__version__ != "0.0.0"
+    import foghorn
+    assert foghorn.__version__, "__version__ is empty"
+    assert foghorn.__version__ != "0.0.0"
 
 def _test_import_public_api():
-    from worldgit import Fact, Decision, StalenessAlert, WorldRepo, WorldCommit
+    from foghorn import Fact, Decision, StalenessAlert, WorldRepo, WorldCommit
     assert callable(WorldRepo.init)
 
-run("worldgit package imports", _test_import_version)
+run("foghorn package imports", _test_import_version)
 run("Public API (WorldRepo, Fact, Decision, StalenessAlert)", _test_import_public_api)
 
 
@@ -84,7 +84,7 @@ run("Public API (WorldRepo, Fact, Decision, StalenessAlert)", _test_import_publi
 section("2. Core data model (Fact, Decision, WorldCommit)")
 
 def _test_fact_content_addressed():
-    from worldgit.fact import Fact
+    from foghorn.fact import Fact
     f1 = Fact(subject="Redis", predicate="is", object="fast")
     f2 = Fact(subject="Redis", predicate="is", object="fast")
     assert f1.id == f2.id, "Same triple must produce same ID"
@@ -92,7 +92,7 @@ def _test_fact_content_addressed():
     assert f1.id != f3.id
 
 def _test_fact_serialization():
-    from worldgit.fact import Fact
+    from foghorn.fact import Fact
     f = Fact(subject="Redis", predicate="is-appropriate-for", object="rate-limiting", confidence=0.9)
     d = f.to_dict()
     assert d["subject"] == "Redis"
@@ -101,7 +101,7 @@ def _test_fact_serialization():
     assert f2.id == f.id
 
 def _test_decision_serialization():
-    from worldgit.fact import Decision, Fact
+    from foghorn.fact import Decision, Fact
     f = Fact(subject="Redis", predicate="is", object="fast")
     dec = Decision(label="chose-redis", content="Redis is fast", fact_ids=[f.id])
     d = dec.to_dict()
@@ -111,7 +111,7 @@ def _test_decision_serialization():
     assert dec2.id == dec.id
 
 def _test_worldrepo_commit_round_trip():
-    from worldgit import WorldRepo
+    from foghorn import WorldRepo
     with tempfile.TemporaryDirectory() as tmp:
         with WorldRepo.init(f"{tmp}/world.db") as repo:
             repo.add_fact("Redis", "is-appropriate-for", "rate-limiting")
@@ -133,7 +133,7 @@ run("WorldRepo commit + log round-trip", _test_worldrepo_commit_round_trip)
 section("3. Staleness propagation")
 
 def _test_stale_detects_changed_fact():
-    from worldgit import WorldRepo
+    from foghorn import WorldRepo
     with tempfile.TemporaryDirectory() as tmp:
         with WorldRepo.init(f"{tmp}/world.db") as repo:
             f = repo.add_fact("Redis", "is-appropriate-for", "rate-limiting")
@@ -147,7 +147,7 @@ def _test_stale_detects_changed_fact():
             assert alerts[0].decision_label == "chose-redis"
 
 def _test_no_stale_identical_facts():
-    from worldgit import WorldRepo
+    from foghorn import WorldRepo
     with tempfile.TemporaryDirectory() as tmp:
         with WorldRepo.init(f"{tmp}/world.db") as repo:
             f = repo.add_fact("Redis", "is", "fast")
@@ -163,7 +163,7 @@ def _test_no_stale_identical_facts():
             assert len(alerts) == 0, "Identical facts should not cause staleness"
 
 def _test_staleness_alert_fields():
-    from worldgit import WorldRepo
+    from foghorn import WorldRepo
     with tempfile.TemporaryDirectory() as tmp:
         with WorldRepo.init(f"{tmp}/world.db") as repo:
             f = repo.add_fact("Redis", "is", "fast", confidence=0.9)
@@ -186,8 +186,8 @@ run("StalenessAlert has impact_score and stale_fact_ids", _test_staleness_alert_
 section("4. Report formatters")
 
 def _test_to_json_with_alerts():
-    from worldgit import WorldRepo
-    from worldgit.report import to_json
+    from foghorn import WorldRepo
+    from foghorn.report import to_json
     with tempfile.TemporaryDirectory() as tmp:
         with WorldRepo.init(f"{tmp}/world.db") as repo:
             f = repo.add_fact("Redis", "is", "fast")
@@ -203,19 +203,19 @@ def _test_to_json_with_alerts():
     assert "alerts" in parsed
 
 def _test_to_markdown():
-    from worldgit.fact import StalenessAlert
-    from worldgit.report import to_markdown
+    from foghorn.fact import StalenessAlert
+    from foghorn.report import to_markdown
     alerts = [StalenessAlert("dec1", "chose-redis", ["fact1"], 0.9)]
     md = to_markdown(alerts)
-    assert "worldgit" in md
+    assert "foghorn" in md
     assert "stale" in md.lower()
     assert "|" in md
 
 def _test_print_stale():
     import io
     from rich.console import Console
-    from worldgit.fact import StalenessAlert
-    from worldgit.report import print_stale
+    from foghorn.fact import StalenessAlert
+    from foghorn.report import print_stale
     buf = io.StringIO()
     con = Console(file=buf, highlight=False)
     alerts = [StalenessAlert("dec1", "chose-redis", ["fact1"], 0.9)]
@@ -230,37 +230,37 @@ run("print_stale() outputs stale alerts to console", _test_print_stale)
 
 # ── 5. CLI ────────────────────────────────────────────────────────────────────
 
-section("5. CLI (worldgit)")
+section("5. CLI (foghorn)")
 
 def _test_cli_help():
     r = subprocess.run(
-        [PYTHON, "-m", "worldgit.cli", "--help"],
+        [PYTHON, "-m", "foghorn.cli", "--help"],
         capture_output=True, text=True
     )
     assert r.returncode == 0
     assert len(r.stdout) > 20, "Help output is empty"
 
-run("worldgit --help returns 0", _test_cli_help)
+run("foghorn --help returns 0", _test_cli_help)
 
 # TODO: Add CLI integration tests for each subcommand, e.g.:
 #   def _test_cli_run():
-#       r = subprocess.run([PYTHON, "-m", "worldgit.cli", "run", "--help"],
+#       r = subprocess.run([PYTHON, "-m", "foghorn.cli", "run", "--help"],
 #                          capture_output=True, text=True)
 #       assert r.returncode == 0
-#   run("worldgit run --help returns 0", _test_cli_run)
+#   run("foghorn run --help returns 0", _test_cli_run)
 
 
 # ── 6. FastAPI server ─────────────────────────────────────────────────────────
 
-section("6. FastAPI server (worldgit[api])")
+section("6. FastAPI server (foghorn[api])")
 
 def _test_api_import():
-    from worldgit.api import app
-    assert app.title == "worldgit API"
+    from foghorn.api import app
+    assert app.title == "foghorn API"
 
 def _test_api_health():
     from fastapi.testclient import TestClient
-    from worldgit.api import app
+    from foghorn.api import app
     client = TestClient(app)
     r = client.get("/health")
     assert r.status_code == 200
@@ -269,7 +269,7 @@ def _test_api_health():
 
 def _test_api_fact_and_stale():
     from fastapi.testclient import TestClient
-    from worldgit.api import app
+    from foghorn.api import app
     client = TestClient(app)
     with tempfile.TemporaryDirectory() as tmp:
         db = f"{tmp}/world.db"
@@ -291,21 +291,21 @@ def _test_api_fact_and_stale():
         assert r_stale.status_code == 200
         assert "has_stale" in r_stale.json()
 
-run("worldgit.api imports and app.title is correct", _test_api_import)
+run("foghorn.api imports and app.title is correct", _test_api_import)
 run("GET /health returns {status: ok, version: ...}", _test_api_health)
 run("POST /fact + /commit + GET /stale workflow", _test_api_fact_and_stale)
 
 
 # ── 7. MCP server ─────────────────────────────────────────────────────────────
 
-section("7. MCP server (worldgit[mcp])")
+section("7. MCP server (foghorn[mcp])")
 
 def _test_mcp_server_importable():
-    import worldgit.mcp_server as m
+    import foghorn.mcp_server as m
     assert hasattr(m, "run_server")
 
 def _test_mcp_server_loads_cleanly():
-    import worldgit.mcp_server  # noqa: F401
+    import foghorn.mcp_server  # noqa: F401
 
 run("mcp_server.py imports without error", _test_mcp_server_importable)
 run("mcp_server module loads cleanly (no import-time crash)", _test_mcp_server_loads_cleanly)
@@ -418,7 +418,7 @@ if failed:
         print(f"    {YELLOW}→ {short}{RESET}")
     print(f"\n{YELLOW}Tip: run with --verbose for full tracebacks{RESET}")
 else:
-    print(f"{GREEN}All {total} checks passed — worldgit is ready to ship{RESET}")
+    print(f"{GREEN}All {total} checks passed — foghorn is ready to ship{RESET}")
 
 print(f"{'═'*60}\n")
 sys.exit(0 if not failed else 1)

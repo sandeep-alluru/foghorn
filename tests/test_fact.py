@@ -1,6 +1,6 @@
-"""Tests for Fact, Decision, and StalenessAlert from worldgit.fact."""
+"""Tests for Fact, Decision, and StalenessAlert from foghorn.fact."""
 
-from worldgit.fact import Decision, Fact, StalenessAlert
+from foghorn.fact import Decision, Fact, StalenessAlert
 
 # ── Fact tests ────────────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-# worldgit — Codex Developer Guide
+# foghorn — Codex Developer Guide
 
 > Read by OpenAI Codex CLI. Supplements AGENTS.md with Codex-specific conventions.
 
@@ -9,7 +9,7 @@ Decision staleness alerts for AI agents
 ## Module map
 
 ```
-src/worldgit/
+src/foghorn/
 ├── # TODO: fill in after implementation
 ```
 

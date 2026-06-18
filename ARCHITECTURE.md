@@ -1,6 +1,6 @@
-# worldgit Architecture
+# foghorn Architecture
 
-This document is the authoritative developer reference for worldgit's internals. It covers the data flow, module responsibilities, key invariants, the SQLite schema, and the staleness propagation algorithm.
+This document is the authoritative developer reference for foghorn's internals. It covers the data flow, module responsibilities, key invariants, the SQLite schema, and the staleness propagation algorithm.
 
 ---
 
@@ -60,7 +60,7 @@ This document is the authoritative developer reference for worldgit's internals.
 | `report.py` | Output formatters: `print_stale()` (Rich terminal), `print_diff()`, `print_log()`, `to_json()`, `to_markdown()`. |
 | `cli.py` | Click CLI. Subcommands: `fact`, `decide`, `commit`, `stale`, `diff`, `log`, `status`. Reads `--db` from context. |
 | `api.py` | FastAPI REST server. Endpoints mirror the CLI subcommands. Suitable for OpenAI function-calling integration. |
-| `mcp_server.py` | Model Context Protocol server stub. Exposes worldgit tools to MCP-compatible agents (Claude, etc.). |
+| `mcp_server.py` | Model Context Protocol server stub. Exposes foghorn tools to MCP-compatible agents (Claude, etc.). |
 
 ---
 
@@ -172,7 +172,7 @@ CREATE TABLE staging (
 **Notes:**
 - `commit_facts` and `commit_decisions` store the *cumulative* fact/decision sets (parent ∪ staged), not just the delta. This makes `get_commit()` O(1) without requiring traversal.
 - `decision_facts` is the critical dependency graph. `get_decisions_for_fact(fact_id)` is a direct index scan on this table.
-- All foreign key relationships are logical (not enforced by SQLite) for simplicity — worldgit's Python layer maintains integrity.
+- All foreign key relationships are logical (not enforced by SQLite) for simplicity — foghorn's Python layer maintains integrity.
 
 ---
 

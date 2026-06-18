@@ -1,10 +1,10 @@
-name: worldgit
+name: foghorn
 description: "Decision staleness alerts for AI agents"
 inputs:
   db:
-    description: "Path to the worldgit database"
+    description: "Path to the foghorn database"
     required: false
-    default: ".worldgit/world.db"
+    default: ".foghorn/world.db"
   fail-on-stale:
     description: "Fail if stale decisions are found"
     required: false
@@ -12,7 +12,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install worldgit
+    - name: Install foghorn
       shell: bash
       run: pip install -e "${{ github.action_path }}"
     - name: Check for stale decisions
@@ -22,4 +22,4 @@ runs:
         if [ "${{ inputs.fail-on-stale }}" = "true" ]; then
           ARGS="$ARGS --exit-code"
         fi
-        worldgit stale $ARGS
+        foghorn stale $ARGS

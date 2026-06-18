@@ -1,11 +1,11 @@
 # Architecture
 
-worldgit is a pure-Python library. Decision staleness alerts for AI agents
+foghorn is a pure-Python library. Decision staleness alerts for AI agents
 
 ## Module map
 
 ```
-src/worldgit/
+src/foghorn/
 ├── # TODO: fill in
 ```
 

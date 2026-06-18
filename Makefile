@@ -21,7 +21,7 @@ fmt:
 	ruff check --fix src/ tests/
 
 typecheck:
-	mypy src/worldgit/
+	mypy src/foghorn/
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true

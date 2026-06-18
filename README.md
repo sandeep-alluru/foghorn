@@ -1,15 +1,15 @@
-# worldgit
+# foghorn
 
 **Decision staleness alerts for AI agents.**
 
-![worldgit](assets/hero.png)
+![foghorn](assets/hero.png)
 
-[![CI](https://github.com/sandeep-alluru/worldgit/actions/workflows/ci.yml/badge.svg)](https://github.com/sandeep-alluru/worldgit/actions/workflows/ci.yml)
-[![PyPI version](https://img.shields.io/pypi/v/worldgit.svg)](https://pypi.org/project/worldgit/)
-[![Python 3.10+](https://img.shields.io/pypi/pyversions/worldgit.svg)](https://pypi.org/project/worldgit/)
-[![Downloads](https://img.shields.io/pypi/dm/worldgit.svg)](https://pypi.org/project/worldgit/)
+[![CI](https://github.com/sandeep-alluru/foghorn/actions/workflows/ci.yml/badge.svg)](https://github.com/sandeep-alluru/foghorn/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/foghorn.svg)](https://pypi.org/project/foghorn/)
+[![Python 3.10+](https://img.shields.io/pypi/pyversions/foghorn.svg)](https://pypi.org/project/foghorn/)
+[![Downloads](https://img.shields.io/pypi/dm/foghorn.svg)](https://pypi.org/project/foghorn/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![codecov](https://codecov.io/gh/sandeep-alluru/worldgit/branch/main/graph/badge.svg)](https://codecov.io/gh/sandeep-alluru/worldgit)
+[![codecov](https://codecov.io/gh/sandeep-alluru/foghorn/branch/main/graph/badge.svg)](https://codecov.io/gh/sandeep-alluru/foghorn)
 [![Typed](https://img.shields.io/badge/types-mypy-blue)](https://mypy-lang.org/)
 
 [Quick Start](#quick-start) · [How It Works](#how-it-works) · [CLI Reference](#cli-reference) · [GitHub Action](#github-action) · [vs. Alternatives](#vs-alternatives) · [Contributing](CONTRIBUTING.md)
@@ -22,10 +22,10 @@ AI agents make decisions. Those decisions depend on facts about the world. The w
 
 When the facts an agent depended on are no longer true, its conclusions become **stale** — but nothing tells you which ones, or how much to worry. You either re-run everything (expensive) or trust outdated conclusions (dangerous).
 
-worldgit solves this by treating agent knowledge like source code: every fact and decision is version-controlled, content-addressed, and diff-able. When facts change, worldgit tells you exactly which decisions are affected and how confident you should be about the impact.
+foghorn solves this by treating agent knowledge like source code: every fact and decision is version-controlled, content-addressed, and diff-able. When facts change, foghorn tells you exactly which decisions are affected and how confident you should be about the impact.
 
 ```
-worldgit stale --exit-code   # Fails CI if any agent decision is based on stale facts
+foghorn stale --exit-code   # Fails CI if any agent decision is based on stale facts
 ```
 
 ---
@@ -35,7 +35,7 @@ worldgit stale --exit-code   # Fails CI if any agent decision is based on stale 
 ```mermaid
 flowchart LR
     A[Agent records Fact\nsubject · predicate · object] --> B[Agent records Decision\ndepends_on Fact IDs]
-    B --> C[worldgit commit\nWorldCommit snapshot]
+    B --> C[foghorn commit\nWorldCommit snapshot]
     C --> D{Fact changes\nnew triple added}
     D --> E[diff_commits\ndetects added/removed]
     E --> F[compute_staleness\nfinds affected decisions]
@@ -62,7 +62,7 @@ Facts and decisions are staged, then committed in batches — exactly like git. 
 | Staleness propagation | `compute_staleness()` finds all affected decisions in one pass |
 | Confidence-weighted impact | `impact_score` reflects how certain the now-stale facts were |
 | Offline / local-first | Single SQLite file, no server required |
-| CI exit code | `--exit-code` makes `worldgit stale` fail CI if anything is stale |
+| CI exit code | `--exit-code` makes `foghorn stale` fail CI if anything is stale |
 | JSON output | Machine-readable output for downstream automation |
 | Markdown output | Ready-to-paste GitHub PR comment |
 | FastAPI REST server | `/fact`, `/decide`, `/commit`, `/stale`, `/log` endpoints |
@@ -74,13 +74,13 @@ Facts and decisions are staged, then committed in batches — exactly like git. 
 ## Quick Start
 
 ```bash
-pip install worldgit
+pip install foghorn
 ```
 
 ```python
-from worldgit.repo import WorldRepo
+from foghorn.repo import WorldRepo
 
-repo = WorldRepo.init(".worldgit/world.db")
+repo = WorldRepo.init(".foghorn/world.db")
 
 # Record facts your agent is relying on
 f = repo.add_fact("Redis", "is-appropriate-for", "rate-limiting", confidence=0.95)
@@ -111,7 +111,7 @@ for alert in alerts:
 ## CLI Reference
 
 ```bash
-worldgit [--db PATH] COMMAND [OPTIONS]
+foghorn [--db PATH] COMMAND [OPTIONS]
 ```
 
 | Command | Description | Key options |
@@ -128,38 +128,38 @@ worldgit [--db PATH] COMMAND [OPTIONS]
 
 | Option | Default | Env var |
 |--------|---------|---------|
-| `--db PATH` | `.worldgit/world.db` | `WORLDGIT_DB` |
+| `--db PATH` | `.foghorn/world.db` | `FOGHORN_DB` |
 
 **Examples:**
 
 ```bash
 # Stage facts
-worldgit fact Redis is-appropriate-for rate-limiting
-worldgit fact Postgres is-primary-db yes --confidence 0.9
+foghorn fact Redis is-appropriate-for rate-limiting
+foghorn fact Postgres is-primary-db yes --confidence 0.9
 
 # Stage a decision that depends on the Redis fact
-worldgit decide chose-redis "Redis fits our rate-limiter requirements" \
+foghorn decide chose-redis "Redis fits our rate-limiter requirements" \
     --on a3f8b2c1d4e5f6a7
 
 # Commit
-worldgit commit -m "Initial architecture decisions"
+foghorn commit -m "Initial architecture decisions"
 
 # Check for staleness (machine-readable)
-worldgit stale --format json
+foghorn stale --format json
 
 # Fail CI if anything is stale
-worldgit stale --exit-code
+foghorn stale --exit-code
 ```
 
 ---
 
 ## GitHub Action
 
-Add worldgit staleness checks to your CI pipeline:
+Add foghorn staleness checks to your CI pipeline:
 
 ```yaml
-# .github/workflows/worldgit.yml
-name: worldgit staleness check
+# .github/workflows/foghorn.yml
+name: foghorn staleness check
 on: [push, pull_request]
 
 jobs:
@@ -167,19 +167,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: sandeep-alluru/worldgit@main
+      - uses: sandeep-alluru/foghorn@main
         with:
-          db: .worldgit/world.db
+          db: .foghorn/world.db
           fail-on-stale: "true"
 ```
 
-The action installs worldgit, runs `worldgit stale --exit-code`, and fails the job if any decisions are stale. See [docs/github-action.md](docs/github-action.md) for full documentation.
+The action installs foghorn, runs `foghorn stale --exit-code`, and fails the job if any decisions are stale. See [docs/github-action.md](docs/github-action.md) for full documentation.
 
 ---
 
 ## vs. Alternatives
 
-| | worldgit | Graphiti / Zep | Letta / Mem0 | Memoria | LangGraph checkpointing |
+| | foghorn | Graphiti / Zep | Letta / Mem0 | Memoria | LangGraph checkpointing |
 |---|---|---|---|---|---|
 | **Decision-dependency tracking** | Yes — explicit fact IDs per decision | No | No | No | No |
 | **Staleness alerts** | Yes — ranked by impact_score | No | No | No | No |
@@ -190,40 +190,40 @@ The action installs worldgit, runs `worldgit stale --exit-code`, and fails the j
 | **Graph storage** | Dependency edges only | Full knowledge graph | Vector + metadata | In-context only | State snapshots |
 | **Open source** | MIT | Open core | Open core | MIT | Apache 2.0 |
 
-worldgit is not a general-purpose agent memory system. It is specifically designed to answer: *"Given that these facts changed, which agent decisions are now invalid?"*
+foghorn is not a general-purpose agent memory system. It is specifically designed to answer: *"Given that these facts changed, which agent decisions are now invalid?"*
 
 ---
 
 ## Claude / MCP integration
 
-worldgit ships a Model Context Protocol server that lets Claude and other MCP-compatible agents record facts and decisions directly:
+foghorn ships a Model Context Protocol server that lets Claude and other MCP-compatible agents record facts and decisions directly:
 
 ```bash
 # Start the MCP server
-python -m worldgit.mcp_server
+python -m foghorn.mcp_server
 
 # In your Claude Code project's .claude/settings.json:
 {
   "mcpServers": {
-    "worldgit": {
+    "foghorn": {
       "command": "python",
-      "args": ["-m", "worldgit.mcp_server"]
+      "args": ["-m", "foghorn.mcp_server"]
     }
   }
 }
 ```
 
-Once connected, Claude can call `worldgit/fact`, `worldgit/decide`, `worldgit/commit`, and `worldgit/stale` as tools. See [docs/mcp.md](docs/mcp.md) for the full tool schema.
+Once connected, Claude can call `foghorn/fact`, `foghorn/decide`, `foghorn/commit`, and `foghorn/stale` as tools. See [docs/mcp.md](docs/mcp.md) for the full tool schema.
 
 ---
 
 ## OpenAI integration
 
-worldgit exposes a FastAPI REST server compatible with OpenAI's function-calling format. The tool definitions are in [`tools/openai-tools.json`](tools/openai-tools.json) and the full API spec is in [`openapi.yaml`](openapi.yaml).
+foghorn exposes a FastAPI REST server compatible with OpenAI's function-calling format. The tool definitions are in [`tools/openai-tools.json`](tools/openai-tools.json) and the full API spec is in [`openapi.yaml`](openapi.yaml).
 
 ```bash
 # Start the REST server
-uvicorn worldgit.api:app --reload
+uvicorn foghorn.api:app --reload
 
 # Pass to Codex CLI or any OpenAI-compatible agent
 codex --tools tools/openai-tools.json "Check which architecture decisions are stale"
@@ -236,9 +236,9 @@ Endpoints: `GET /health`, `POST /fact`, `POST /decide`, `POST /commit`, `GET /st
 ## Repository structure
 
 ```
-worldgit/
+foghorn/
 ├── src/
-│   └── worldgit/
+│   └── foghorn/
 │       ├── fact.py           # Fact, Decision, StalenessAlert dataclasses
 │       ├── store.py          # SQLite-backed WorldStore + WorldCommit
 │       ├── staleness.py      # DiffResult, diff_commits(), compute_staleness()
@@ -277,4 +277,4 @@ Suggested topics for discoverability:
 
 ---
 
-[![Star History Chart](https://api.star-history.com/svg?repos=sandeep-alluru/worldgit&type=Date)](https://star-history.com/#sandeep-alluru/worldgit&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=sandeep-alluru/foghorn&type=Date)](https://star-history.com/#sandeep-alluru/foghorn&Date)

@@ -3,14 +3,14 @@
 ## Top-level exports
 
 ```python
-import worldgit
+import foghorn
 ```
 
 <!-- mkdocstrings will auto-generate from docstrings below -->
 
-::: worldgit
+::: foghorn
 
 <!-- TODO: add per-module sections as you implement them:
-::: worldgit.core
-::: worldgit.cli
+::: foghorn.core
+::: foghorn.cli
 -->

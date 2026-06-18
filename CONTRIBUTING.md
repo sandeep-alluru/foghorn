@@ -1,4 +1,4 @@
-# Contributing to worldgit
+# Contributing to foghorn
 
 Thank you for your interest in contributing. This guide covers everything you need to go from zero to a merged PR.
 
@@ -16,8 +16,8 @@ Thank you for your interest in contributing. This guide covers everything you ne
 ## Quick start
 
 ```bash
-git clone https://github.com/sandeep-alluru/worldgit
-cd worldgit
+git clone https://github.com/sandeep-alluru/foghorn
+cd foghorn
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 pre-commit install
@@ -37,14 +37,14 @@ Or individually:
 ```bash
 pytest tests/ -v
 ruff check src/ tests/
-mypy src/worldgit/
+mypy src/foghorn/
 ```
 
 ## Adding a new adapter
 
-1. Create `src/worldgit/adapters/{framework}.py`
+1. Create `src/foghorn/adapters/{framework}.py`
 2. Implement a class that emits `WorldFact` and `Decision` objects
-3. Export the class from `src/worldgit/adapters/__init__.py`
+3. Export the class from `src/foghorn/adapters/__init__.py`
 4. Add tests in `tests/test_{framework}_adapter.py`
 5. Document the new adapter in the `## Adapters` section of the README
 

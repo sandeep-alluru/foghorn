@@ -1,11 +1,11 @@
-# GitHub Copilot Instructions — worldgit
+# GitHub Copilot Instructions — foghorn
 
-worldgit: Decision staleness alerts for AI agents
+foghorn: Decision staleness alerts for AI agents
 
 ## Module map
 
 ```
-src/worldgit/
+src/foghorn/
 ├── # TODO: fill in after implementation
 ```
 
@@ -29,6 +29,6 @@ src/worldgit/
 
 ## Adding a new adapter / integration
 
-1. Create `src/worldgit/instrument_<framework>.py`
+1. Create `src/foghorn/instrument_<framework>.py`
 2. Export from `__init__.py`, add to `__all__` alphabetically
 3. Add tests

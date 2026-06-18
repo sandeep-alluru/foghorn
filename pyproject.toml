@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "worldgit"
+name = "foghorn"
 version = "0.1.0"
 description = "Decision staleness alerts for AI agents"
 readme = "README.md"
@@ -47,15 +47,15 @@ mcp = ["mcp>=1.0"]
 api = ["fastapi>=0.110", "uvicorn>=0.29"]
 
 [project.scripts]
-worldgit = "worldgit.cli:main"
-worldgit-mcp = "worldgit.mcp_server:run_server"
+foghorn = "foghorn.cli:main"
+foghorn-mcp = "foghorn.mcp_server:run_server"
 
 [project.urls]
-Homepage      = "https://github.com/sandeep-alluru/worldgit"
-Repository    = "https://github.com/sandeep-alluru/worldgit"
-Documentation = "https://sandeep-alluru.github.io/worldgit"
-Changelog     = "https://github.com/sandeep-alluru/worldgit/blob/main/CHANGELOG.md"
-Issues        = "https://github.com/sandeep-alluru/worldgit/issues"
+Homepage      = "https://github.com/sandeep-alluru/foghorn"
+Repository    = "https://github.com/sandeep-alluru/foghorn"
+Documentation = "https://sandeep-alluru.github.io/foghorn"
+Changelog     = "https://github.com/sandeep-alluru/foghorn/blob/main/CHANGELOG.md"
+Issues        = "https://github.com/sandeep-alluru/foghorn/issues"
 
 [tool.ruff]
 line-length    = 100
@@ -96,10 +96,10 @@ disallow_untyped_defs    = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts   = "--cov=worldgit --cov-report=term-missing --cov-report=xml"
+addopts   = "--cov=foghorn --cov-report=term-missing --cov-report=xml"
 
 [tool.coverage.run]
-source   = ["worldgit"]
+source   = ["foghorn"]
 branch   = true
 omit     = ["*/tests/*", "*/examples/*"]
 

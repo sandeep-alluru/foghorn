@@ -2,7 +2,7 @@
 
 import pytest
 
-from worldgit.repo import WorldRepo
+from foghorn.repo import WorldRepo
 
 
 @pytest.fixture
@@ -66,7 +66,7 @@ def test_stale_returns_alerts_after_fact_changes(repo):
     # diff HEAD vs parent should detect the new fact
     head = repo.store.head()
     parent = repo.store.get_commit(head.parent_id)
-    from worldgit.staleness import compute_staleness, diff_commits
+    from foghorn.staleness import compute_staleness, diff_commits
 
     diff = diff_commits(repo.store, parent, head)
     alerts = compute_staleness(repo.store, diff.changed_fact_ids)

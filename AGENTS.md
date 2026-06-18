@@ -1,4 +1,4 @@
-# worldgit — Agent Context
+# foghorn — Agent Context
 
 This file describes the project architecture for AI coding assistants (Claude Code, Cursor, Copilot).
 
@@ -9,7 +9,7 @@ Decision staleness alerts for AI agents
 ## Module map
 
 ```
-src/worldgit/
+src/foghorn/
 ├── # TODO: fill in module map
 ```
 

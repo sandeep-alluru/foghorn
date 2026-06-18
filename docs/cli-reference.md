@@ -1,6 +1,6 @@
 # CLI Reference
 
-## `worldgit <command>`
+## `foghorn <command>`
 
 TODO: document CLI commands and options
 

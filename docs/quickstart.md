@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-pip install worldgit
+pip install foghorn
 ```
 
 ## Step 1
@@ -17,7 +17,7 @@ TODO: second step
 ## Python API
 
 ```python
-import worldgit
+import foghorn
 
 # TODO: add real API example
 ```

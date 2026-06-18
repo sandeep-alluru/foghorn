@@ -1,13 +1,13 @@
-"""MCP server for worldgit.
+"""MCP server for foghorn.
 
-Start:  python -m worldgit.mcp_server
-Or:     worldgit-mcp
+Start:  python -m foghorn.mcp_server
+Or:     foghorn-mcp
 
 Add to Claude Desktop (~/.config/claude/claude_desktop_config.json):
     {
         "mcpServers": {
-            "worldgit": {
-                "command": "worldgit-mcp"
+            "foghorn": {
+                "command": "foghorn-mcp"
             }
         }
     }
@@ -28,7 +28,7 @@ def _require_mcp() -> Any:
         return mcp, types, _Server
     except ImportError:
         print(
-            "MCP server requires: pip install 'worldgit[mcp]'",
+            "MCP server requires: pip install 'foghorn[mcp]'",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -38,7 +38,7 @@ def run_server() -> None:
     """Start the MCP server on stdio."""
     mcp_mod, types, server_cls = _require_mcp()
 
-    server = server_cls("worldgit")
+    server = server_cls("foghorn")
 
     @server.list_tools()
     async def list_tools() -> list[types.Tool]:

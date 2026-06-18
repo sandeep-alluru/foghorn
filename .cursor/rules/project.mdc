@@ -1,17 +1,17 @@
 ---
-description: worldgit coding rules and architecture context
+description: foghorn coding rules and architecture context
 globs: ["src/**/*.py", "tests/**/*.py"]
 alwaysApply: true
 ---
 
-# worldgit — Cursor Rules
+# foghorn — Cursor Rules
 
 ## What this project does
 Decision staleness alerts for AI agents
 
 ## Module map
 ```
-src/worldgit/
+src/foghorn/
 ├── # TODO: fill in after implementation
 ```
 

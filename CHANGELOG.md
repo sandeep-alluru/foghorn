@@ -17,8 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rich terminal output, JSON, and Markdown formatters
 - Click CLI: `fact`, `decide`, `commit`, `stale`, `diff`, `log`, `status` subcommands
 - FastAPI REST server: `/fact`, `/decide`, `/commit`, `/stale`, `/log`, `/health`
-- MCP server (`worldgit-mcp`) for native Claude tool integration
+- MCP server (`foghorn-mcp`) for native Claude tool integration
 - 77 unit tests, 87% branch coverage
 
-[Unreleased]: https://github.com/sandeep-alluru/worldgit/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/sandeep-alluru/worldgit/releases/tag/v0.1.0
+[Unreleased]: https://github.com/sandeep-alluru/foghorn/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/sandeep-alluru/foghorn/releases/tag/v0.1.0

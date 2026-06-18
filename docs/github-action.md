@@ -1,10 +1,10 @@
 # GitHub Action
 
-Use worldgit directly in your GitHub Actions workflow:
+Use foghorn directly in your GitHub Actions workflow:
 
 ```yaml
-- name: worldgit
-  uses: sandeep-alluru/worldgit@v0.1.0
+- name: foghorn
+  uses: sandeep-alluru/foghorn@v0.1.0
   with:
     # TODO: add action inputs
     fail-on-error: "true"
@@ -13,9 +13,9 @@ Use worldgit directly in your GitHub Actions workflow:
 Or use the CLI directly:
 
 ```yaml
-- name: Install worldgit
-  run: pip install worldgit
+- name: Install foghorn
+  run: pip install foghorn
 
-- name: Run worldgit
-  run: worldgit --help
+- name: Run foghorn
+  run: foghorn --help
 ```

@@ -1,4 +1,4 @@
-"""Command-line interface for worldgit."""
+"""Command-line interface for foghorn."""
 
 from __future__ import annotations
 
@@ -6,30 +6,30 @@ import sys
 
 import click
 
-from worldgit.repo import WorldRepo
-from worldgit.report import print_diff, print_log, print_stale, to_json, to_markdown
+from foghorn.repo import WorldRepo
+from foghorn.report import print_diff, print_log, print_stale, to_json, to_markdown
 
 
 def _repo(ctx: click.Context) -> WorldRepo:
     """Return a WorldRepo from the context or default path."""
-    db_path = ctx.obj.get("db") if ctx.obj else ".worldgit/world.db"
+    db_path = ctx.obj.get("db") if ctx.obj else ".foghorn/world.db"
     return WorldRepo.init(db_path)
 
 
 @click.group()
-@click.version_option(package_name="worldgit")
+@click.version_option(package_name="foghorn")
 @click.option(
     "--db",
-    default=".worldgit/world.db",
+    default=".foghorn/world.db",
     show_default=True,
-    help="Path to the worldgit database.",
-    envvar="WORLDGIT_DB",
+    help="Path to the foghorn database.",
+    envvar="FOGHORN_DB",
 )
 @click.pass_context
 def main(ctx: click.Context, db: str) -> None:
     """Decision staleness alerts for AI agents.
 
-    worldgit tracks which agent decisions depend on which facts,
+    foghorn tracks which agent decisions depend on which facts,
     and alerts you when upstream facts change.
     """
     ctx.ensure_object(dict)
@@ -49,8 +49,8 @@ def fact(ctx: click.Context, subject: str, predicate: str, object: str, confiden
 
     \b
     Examples:
-      worldgit fact Redis is-appropriate-for rate-limiting
-      worldgit fact "Postgres" "is-primary-db" "yes" --confidence 0.9
+      foghorn fact Redis is-appropriate-for rate-limiting
+      foghorn fact "Postgres" "is-primary-db" "yes" --confidence 0.9
     """
     with _repo(ctx) as repo:
         f = repo.add_fact(subject, predicate, object, confidence)
@@ -73,7 +73,7 @@ def decide(ctx: click.Context, label: str, content: str, depends_on: tuple[str, 
 
     \b
     Examples:
-      worldgit decide chose-redis "Redis fits our rate-limiter requirements" \\
+      foghorn decide chose-redis "Redis fits our rate-limiter requirements" \\
           --on abc123 --on def456
     """
     with _repo(ctx) as repo:
@@ -89,7 +89,7 @@ def commit_cmd(ctx: click.Context, message: str) -> None:
 
     \b
     Examples:
-      worldgit commit -m "Initial architecture decisions"
+      foghorn commit -m "Initial architecture decisions"
     """
     with _repo(ctx) as repo:
         try:
@@ -123,9 +123,9 @@ def stale(ctx: click.Context, since: str | None, fmt: str, exit_code: bool) -> N
 
     \b
     Examples:
-      worldgit stale
-      worldgit stale --format json
-      worldgit stale --exit-code   # fails CI if anything is stale
+      foghorn stale
+      foghorn stale --format json
+      foghorn stale --exit-code   # fails CI if anything is stale
     """
     with _repo(ctx) as repo:
         since_commit = None
@@ -160,8 +160,8 @@ def diff(ctx: click.Context, fmt: str) -> None:
 
     \b
     Examples:
-      worldgit diff
-      worldgit diff --format json
+      foghorn diff
+      foghorn diff --format json
     """
     with _repo(ctx) as repo:
         try:
@@ -180,7 +180,7 @@ def diff(ctx: click.Context, fmt: str) -> None:
             }
             click.echo(__import__("json").dumps(data, indent=2))
         elif fmt == "markdown":
-            lines = ["## worldgit diff", ""]
+            lines = ["## foghorn diff", ""]
             for f in d.added_facts:
                 lines.append(f"+ `{f.subject}` **{f.predicate}** `{f.object}`")
             for f in d.removed_facts:
@@ -195,7 +195,7 @@ def log(ctx: click.Context) -> None:
 
     \b
     Examples:
-      worldgit log
+      foghorn log
     """
     with _repo(ctx) as repo:
         commits = repo.log()

@@ -1,4 +1,4 @@
-# worldgit — Session Anchor
+# foghorn — Session Anchor
 
 **Research spec:** `../tech-research/01-Memory-and-Knowledge-State/differential-knowledge-runtime-dkr-version-controlled-me/README.md`  
 **One-liner:** Git for agent world-state — version-controlled, mergeable belief DAG with AGM-compliant merge  
@@ -12,8 +12,8 @@
 Read the research spec, then design the core data model: content-addressed fact snapshots + belief-commit DAG.
 
 ## MVP definition
-- `pip install worldgit` works
-- CLI: `worldgit commit "Alice is CEO"`, `worldgit diff HEAD~1`, `worldgit log`, `worldgit merge`
+- `pip install foghorn` works
+- CLI: `foghorn commit "Alice is CEO"`, `foghorn diff HEAD~1`, `foghorn log`, `foghorn merge`
 - Content-addressed immutable fact snapshots (hyperedges)
 - DAG of belief commits (mutable refs)
 - 3-way merge for typed triples with basic conflict detection

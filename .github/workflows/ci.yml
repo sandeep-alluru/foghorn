@@ -41,7 +41,7 @@ jobs:
         run: ruff format --check src/ tests/
 
       - name: Type check
-        run: mypy src/worldgit/ --ignore-missing-imports
+        run: mypy src/foghorn/ --ignore-missing-imports
 
       - name: Test
         run: pytest tests/ -v --tb=short
@@ -68,12 +68,12 @@ jobs:
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-3.11-${{ hashFiles('pyproject.toml') }}
-      - name: Install worldgit
+      - name: Install foghorn
         run: pip install -e .
       - name: Check world state (if DB exists)
         run: |
-          if [ -f .worldgit/world.db ]; then
-            worldgit status
+          if [ -f .foghorn/world.db ]; then
+            foghorn status
           else
             echo "No world DB — skipping staleness check."
           fi

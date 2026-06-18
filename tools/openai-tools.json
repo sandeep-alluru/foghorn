@@ -3,7 +3,7 @@
     "type": "function",
     "function": {
       "name": "add_fact",
-      "description": "Stage a new fact triple (subject, predicate, object) into the worldgit store. Call this whenever you learn or observe something that should be recorded as a world-state fact. Facts are content-addressed; storing the same triple twice is a no-op.",
+      "description": "Stage a new fact triple (subject, predicate, object) into the foghorn store. Call this whenever you learn or observe something that should be recorded as a world-state fact. Facts are content-addressed; storing the same triple twice is a no-op.",
       "strict": true,
       "parameters": {
         "type": "object",
@@ -26,7 +26,7 @@
           },
           "db": {
             "type": "string",
-            "description": "Path to the worldgit SQLite database. Defaults to .worldgit/world.db."
+            "description": "Path to the foghorn SQLite database. Defaults to .foghorn/world.db."
           }
         },
         "required": ["subject", "predicate", "object", "confidence", "db"],
@@ -58,7 +58,7 @@
           },
           "db": {
             "type": "string",
-            "description": "Path to the worldgit SQLite database. Defaults to .worldgit/world.db."
+            "description": "Path to the foghorn SQLite database. Defaults to .foghorn/world.db."
           }
         },
         "required": ["label", "content", "depends_on", "db"],
@@ -77,7 +77,7 @@
         "properties": {
           "db": {
             "type": "string",
-            "description": "Path to the worldgit SQLite database. Defaults to .worldgit/world.db."
+            "description": "Path to the foghorn SQLite database. Defaults to .foghorn/world.db."
           }
         },
         "required": ["db"],

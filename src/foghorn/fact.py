@@ -1,4 +1,4 @@
-"""Fact and Decision data models — the content-addressed primitives of worldgit."""
+"""Fact and Decision data models — the content-addressed primitives of foghorn."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ def _sha16(text: str) -> str:
 class Fact:
     """An immutable, content-addressed triple that agents assert about the world.
 
-    Facts are the atoms of worldgit. Two Facts with the same subject, predicate,
+    Facts are the atoms of foghorn. Two Facts with the same subject, predicate,
     and object always have the same ID, regardless of when they were recorded.
 
     Attributes:
@@ -70,7 +70,7 @@ class Fact:
 class Decision:
     """A named agent conclusion recorded alongside the facts it depended on.
 
-    Decisions are the nodes that worldgit watches for staleness. When any
+    Decisions are the nodes that foghorn watches for staleness. When any
     Fact listed in ``fact_ids`` changes, this Decision is marked stale.
 
     Attributes:

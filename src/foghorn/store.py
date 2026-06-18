@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from worldgit.fact import Decision, Fact, _sha16
+from foghorn.fact import Decision, Fact, _sha16
 
 
 @dataclass
@@ -71,7 +71,7 @@ class WorldCommit:
 
 
 class WorldStore:
-    """SQLite-backed persistence layer for worldgit.
+    """SQLite-backed persistence layer for foghorn.
 
     All Facts, Decisions, and Commits are stored in a single SQLite database.
     Content-addressed IDs guarantee deduplication: storing the same fact twice

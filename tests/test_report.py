@@ -1,14 +1,14 @@
-"""Tests for worldgit.report formatters."""
+"""Tests for foghorn.report formatters."""
 
 import io
 import json
 
 from rich.console import Console
 
-from worldgit.fact import StalenessAlert
-from worldgit.repo import WorldRepo
-from worldgit.report import print_diff, print_log, print_stale, to_json, to_markdown
-from worldgit.staleness import diff_commits
+from foghorn.fact import StalenessAlert
+from foghorn.repo import WorldRepo
+from foghorn.report import print_diff, print_log, print_stale, to_json, to_markdown
+from foghorn.staleness import diff_commits
 
 
 def _console(buf: io.StringIO) -> Console:
@@ -76,7 +76,7 @@ def test_to_json_with_diff(tmp_path):
 def test_to_markdown_no_alerts():
     md = to_markdown([])
     assert "No stale" in md
-    assert "worldgit" in md
+    assert "foghorn" in md
 
 
 def test_to_markdown_with_alerts():
