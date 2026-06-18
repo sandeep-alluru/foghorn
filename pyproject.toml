@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "foghorn"
+name = "foghorn-ai"
 version = "0.1.0"
 description = "Decision staleness alerts for AI agents"
 readme = "README.md"
