@@ -1,0 +1,88 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "add_fact",
+      "description": "Stage a new fact triple (subject, predicate, object) into the worldgit store. Call this whenever you learn or observe something that should be recorded as a world-state fact. Facts are content-addressed; storing the same triple twice is a no-op.",
+      "strict": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "The entity this fact is about (e.g. 'Redis', 'payment-service')."
+          },
+          "predicate": {
+            "type": "string",
+            "description": "The relationship being asserted (e.g. 'is-appropriate-for', 'replaced', 'version')."
+          },
+          "object": {
+            "type": "string",
+            "description": "The value of the assertion (e.g. 'rate-limiting', 'Valkey', '7.2')."
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Belief weight in [0.0, 1.0]. Omit or pass 1.0 for high-confidence facts."
+          },
+          "db": {
+            "type": "string",
+            "description": "Path to the worldgit SQLite database. Defaults to .worldgit/world.db."
+          }
+        },
+        "required": ["subject", "predicate", "object", "confidence", "db"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "add_decision",
+      "description": "Stage a new agent decision with its fact dependencies. Call this when you make an architectural, strategic, or configuration decision so it can be tracked and invalidated when upstream facts change.",
+      "strict": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Short kebab-case slug for the decision (e.g. 'chose-redis-for-sessions')."
+          },
+          "content": {
+            "type": "string",
+            "description": "Full reasoning text explaining why this decision was made."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "List of Fact IDs (from add_fact responses) this decision relied upon."
+          },
+          "db": {
+            "type": "string",
+            "description": "Path to the worldgit SQLite database. Defaults to .worldgit/world.db."
+          }
+        },
+        "required": ["label", "content", "depends_on", "db"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_stale",
+      "description": "Return staleness alerts for decisions whose upstream facts have changed since the last commit. Call this before acting on a prior decision to verify it is still valid. Returns an empty list when everything is consistent.",
+      "strict": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "db": {
+            "type": "string",
+            "description": "Path to the worldgit SQLite database. Defaults to .worldgit/world.db."
+          }
+        },
+        "required": ["db"],
+        "additionalProperties": false
+      }
+    }
+  }
+]

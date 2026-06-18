@@ -1,0 +1,18 @@
+# aider configuration for worldgit
+# https://aider.chat/docs/config/aider_conf.html
+
+read:
+  - ARCHITECTURE.md
+  - CLAUDE.md
+  - src/worldgit/__init__.py
+
+lint: true
+lint-cmd: "ruff check {files} && ruff format --check {files}"
+
+auto-test: false
+test-cmd: "pytest tests/ -x -q"
+
+model: claude-sonnet-4-5
+
+attribute-author: false
+attribute-co-author: true

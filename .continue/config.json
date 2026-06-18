@@ -1,0 +1,29 @@
+{
+  "name": "worldgit",
+  "version": "0.1.0",
+  "schema": "v1",
+  "context": [
+    {"provider": "file", "params": {"nRetrieve": 20, "nFinal": 5}},
+    {"provider": "code"}
+  ],
+  "docs": [
+    {
+      "title": "worldgit Architecture",
+      "startUrl": "file://./ARCHITECTURE.md",
+      "faviconUrl": ""
+    }
+  ],
+  "customCommands": [
+    {
+      "name": "explain",
+      "prompt": "Explain how this part of worldgit works: {input}. Use the module map in AGENTS.md as context.",
+      "description": "Explain a part of the codebase"
+    }
+  ],
+  "rules": [
+    "This is worldgit — Decision staleness alerts for AI agents.",
+    "Library code must not use print() — use rich.console.Console.",
+    "All public API must have type annotations and docstrings.",
+    "Tests use pytest. CLI tests use click.testing.CliRunner."
+  ]
+}

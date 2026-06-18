@@ -1,0 +1,25 @@
+name: worldgit
+description: "Decision staleness alerts for AI agents"
+inputs:
+  db:
+    description: "Path to the worldgit database"
+    required: false
+    default: ".worldgit/world.db"
+  fail-on-stale:
+    description: "Fail if stale decisions are found"
+    required: false
+    default: "true"
+runs:
+  using: "composite"
+  steps:
+    - name: Install worldgit
+      shell: bash
+      run: pip install -e "${{ github.action_path }}"
+    - name: Check for stale decisions
+      shell: bash
+      run: |
+        ARGS="--db ${{ inputs.db }}"
+        if [ "${{ inputs.fail-on-stale }}" = "true" ]; then
+          ARGS="$ARGS --exit-code"
+        fi
+        worldgit stale $ARGS

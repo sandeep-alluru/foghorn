@@ -1,0 +1,38 @@
+openapi: "3.1.0"
+info:
+  title: worldgit API
+  description: Decision staleness alerts for AI agents
+  version: "0.1.0"
+  contact:
+    name: Sandeep Alluru
+    email: onepuncchh@gmail.com
+  license:
+    name: MIT
+    url: https://github.com/sandeep-alluru/worldgit/blob/main/LICENSE
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  version:
+                    type: string
+                    example: "0.1.0"
+
+  # TODO: add your API endpoints here
+  # Follow the agentdelta openapi.yaml as reference

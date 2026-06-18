@@ -1,0 +1,42 @@
+name: Bug Report
+description: Something is broken
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: worldgit version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.11.5"
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command / code that triggered the bug
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior (include full traceback)
+      render: text
+    validations:
+      required: true

@@ -1,0 +1,21 @@
+# worldgit — Windsurf Rules
+
+## Project overview
+Decision staleness alerts for AI agents
+
+## Module map
+```
+src/worldgit/
+├── # TODO: fill in after implementation
+```
+
+## Rules
+1. All public API must have type annotations and docstrings
+2. Library code must not use print() — use rich.console.Console
+3. New features must have tests before merging
+4. All imports must pass ruff (E W F I UP B S N SIM RUF PT)
+5. No `types-all` in pre-commit mypy hook
+
+## Stack
+Python 3.10+, rich, click, pytest
+Linting: ruff, mypy strict

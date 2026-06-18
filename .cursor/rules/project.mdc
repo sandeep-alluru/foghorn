@@ -1,0 +1,32 @@
+---
+description: worldgit coding rules and architecture context
+globs: ["src/**/*.py", "tests/**/*.py"]
+alwaysApply: true
+---
+
+# worldgit — Cursor Rules
+
+## What this project does
+Decision staleness alerts for AI agents
+
+## Module map
+```
+src/worldgit/
+├── # TODO: fill in after implementation
+```
+
+## Invariants — never break these
+- TODO: list invariants
+
+## Code style
+- Python 3.10+, fully type-annotated, mypy strict mode
+- Ruff lint rules: E W F I UP B S N SIM RUF PT
+- No print() in library code — use rich.console.Console
+- All public functions and classes must have docstrings
+- Tests: pytest, CliRunner for CLI tests
+
+## When adding a new feature
+1. Implement in the appropriate module
+2. Export from __init__.py, add to __all__ alphabetically
+3. Add tests in tests/test_<module>.py
+4. Update CHANGELOG.md under [Unreleased]
