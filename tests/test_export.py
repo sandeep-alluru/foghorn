@@ -54,7 +54,7 @@ def test_export_json_contains_data(populated_repo: WorldRepo) -> None:
     assert "use-redis-pubsub" in decision_labels
 
 
-def test_import_json_returns_count(tmp_path: "Path", populated_repo: WorldRepo) -> None:
+def test_import_json_returns_count(tmp_path, populated_repo: WorldRepo) -> None:
     """import_json should return a positive count of imported items."""
     target_db = tmp_path / "target.db"
     target = WorldRepo.init(str(target_db))
@@ -95,3 +95,52 @@ def test_repo_export_json_convenience(populated_repo: WorldRepo) -> None:
     result = populated_repo.export_json()
     data = json.loads(result)
     assert "facts" in data
+
+
+def test_import_json_wrong_version_raises(tmp_path, populated_repo: WorldRepo) -> None:
+    """import_json should raise ValueError if export version is not 1."""
+    import json as json_mod
+    bad_export = json_mod.dumps({"foghorn_export_version": 99, "facts": [], "decisions": []})
+    target_db = tmp_path / "target_v99.db"
+    target = WorldRepo.init(str(target_db))
+    try:
+        with pytest.raises(ValueError, match="Unsupported export version"):
+            import_json(bad_export, target)
+    finally:
+        target.close()
+
+
+def test_import_json_missing_version_raises(tmp_path, populated_repo: WorldRepo) -> None:
+    """import_json should raise ValueError if foghorn_export_version key is missing."""
+    import json as json_mod
+    bad_export = json_mod.dumps({"facts": [], "decisions": []})  # no version key
+    target_db = tmp_path / "target_no_ver.db"
+    target = WorldRepo.init(str(target_db))
+    try:
+        with pytest.raises(ValueError, match="Unsupported export version"):
+            import_json(bad_export, target)
+    finally:
+        target.close()
+
+
+def test_import_json_invalid_json_raises(tmp_path, populated_repo: WorldRepo) -> None:
+    """import_json should raise ValueError on invalid JSON."""
+    target_db = tmp_path / "target_bad_json.db"
+    target = WorldRepo.init(str(target_db))
+    try:
+        with pytest.raises(ValueError, match="Invalid JSON"):
+            import_json("this is not json!!!", target)
+    finally:
+        target.close()
+
+
+def test_import_json_non_dict_raises(tmp_path, populated_repo: WorldRepo) -> None:
+    """import_json should raise ValueError if top-level JSON is not an object."""
+    import json as json_mod
+    target_db = tmp_path / "target_list.db"
+    target = WorldRepo.init(str(target_db))
+    try:
+        with pytest.raises(ValueError, match="top-level object"):
+            import_json(json_mod.dumps([1, 2, 3]), target)
+    finally:
+        target.close()

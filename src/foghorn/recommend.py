@@ -84,7 +84,10 @@ def recommend(repo: WorldRepo) -> list[Recommendation]:
         n_stale = len(alert.stale_fact_ids)
 
         # Determine action
-        if total_facts > 0 and n_stale >= total_facts:
+        if total_facts == 0:
+            action = "review"
+            reason = "Decision has no fact dependencies — review if still relevant"
+        elif total_facts > 0 and n_stale >= total_facts:
             action = "archive"
             reason = (
                 f"All {total_facts} fact(s) this decision depended on have changed — "

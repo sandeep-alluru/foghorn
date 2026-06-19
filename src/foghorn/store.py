@@ -203,29 +203,69 @@ class WorldStore:
     def list_decisions(self) -> list[Decision]:
         """Return all stored Decisions ordered by recorded_at."""
         rows = self._conn.execute("SELECT * FROM decisions ORDER BY recorded_at").fetchall()
+
+        if not rows:
+            return []
+
+        # Batch fetch all fact IDs for these decisions in one query
+        decision_ids = [r["id"] for r in rows]
+        placeholders = ",".join("?" * len(decision_ids))
+        # Placeholders are built from "?" * N — no injection risk
+        df_sql = (
+            "SELECT decision_id, fact_id FROM decision_facts "
+            f"WHERE decision_id IN ({placeholders})"
+        )
+        fact_rows = self._conn.execute(df_sql, decision_ids).fetchall()
+
+        # Group fact IDs by decision
+        fact_map: dict[str, list[str]] = {r["id"]: [] for r in rows}
+        for fr in fact_rows:
+            fact_map[fr["decision_id"]].append(fr["fact_id"])
+
         result = []
         for row in rows:
             d = Decision.from_dict(dict(row))
-            fact_ids = [
-                r[0]
-                for r in self._conn.execute(
-                    "SELECT fact_id FROM decision_facts WHERE decision_id=?", (d.id,)
-                ).fetchall()
-            ]
-            d.fact_ids = fact_ids
+            d.fact_ids = fact_map[d.id]
             result.append(d)
         return result
 
     def get_decisions_for_fact(self, fact_id: str) -> list[Decision]:
         """Return all Decisions that depend on a given Fact."""
-        rows = self._conn.execute(
+        decision_id_rows = self._conn.execute(
             "SELECT decision_id FROM decision_facts WHERE fact_id=?", (fact_id,)
         ).fetchall()
+
+        if not decision_id_rows:
+            return []
+
+        decision_ids = [r[0] for r in decision_id_rows]
+        placeholders = ",".join("?" * len(decision_ids))
+
+        # Batch fetch all decision rows in one query
+        sql_dec = f"SELECT * FROM decisions WHERE id IN ({placeholders})"
+        rows = self._conn.execute(sql_dec, decision_ids).fetchall()
+
+        if not rows:
+            return []
+
+        # Batch fetch all fact IDs for these decisions in one query
+        # Placeholders are built from "?" * N — no injection risk
+        df2_sql = (
+            "SELECT decision_id, fact_id FROM decision_facts "
+            f"WHERE decision_id IN ({placeholders})"
+        )
+        fact_rows = self._conn.execute(df2_sql, decision_ids).fetchall()
+
+        # Group fact IDs by decision
+        fact_map: dict[str, list[str]] = {did: [] for did in decision_ids}
+        for fr in fact_rows:
+            fact_map[fr["decision_id"]].append(fr["fact_id"])
+
         decisions = []
         for row in rows:
-            d = self.get_decision(row[0])
-            if d is not None:
-                decisions.append(d)
+            d = Decision.from_dict(dict(row))
+            d.fact_ids = fact_map.get(d.id, [])
+            decisions.append(d)
         return decisions
 
     # ── Commits ───────────────────────────────────────────────────────────────

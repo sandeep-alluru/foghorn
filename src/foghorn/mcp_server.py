@@ -18,41 +18,36 @@ from __future__ import annotations
 import sys
 from typing import Any
 
-
-def _require_mcp() -> Any:
-    try:
-        import mcp.server.stdio
-        import mcp.types as types
-        from mcp.server import Server as _Server
-
-        return mcp, types, _Server
-    except ImportError:
-        print(
-            "MCP server requires: pip install 'foghorn[mcp]'",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+try:
+    import mcp.server.stdio as _mcp_stdio
+    import mcp.types as _mcp_types
+    from mcp.server import Server as _Server
+    _HAS_MCP = True
+except ImportError:
+    _HAS_MCP = False
 
 
 def run_server() -> None:
     """Start the MCP server on stdio."""
-    mcp_mod, types, server_cls = _require_mcp()
+    if not _HAS_MCP:
+        print("MCP server requires: pip install 'foghorn[mcp]'", file=sys.stderr)
+        sys.exit(1)
 
-    server = server_cls("foghorn")
+    server = _Server("foghorn")
 
     @server.list_tools()
-    async def list_tools() -> list[types.Tool]:
+    async def list_tools() -> list[_mcp_types.Tool]:
         # TODO: define tools matching your CLI commands
         return []
 
     @server.call_tool()
-    async def call_tool(name: str, arguments: dict[str, Any]) -> list[types.TextContent]:
+    async def call_tool(name: str, arguments: dict[str, Any]) -> list[_mcp_types.TextContent]:
         raise ValueError(f"Unknown tool: {name}")
 
     import asyncio
 
     async def _main() -> None:
-        async with mcp_mod.server.stdio.stdio_server() as (read_stream, write_stream):
+        async with _mcp_stdio.stdio_server() as (read_stream, write_stream):
             await server.run(read_stream, write_stream, server.create_initialization_options())
 
     asyncio.run(_main())

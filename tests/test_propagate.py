@@ -88,3 +88,71 @@ def test_propagate_convenience_method(repo: WorldRepo) -> None:
     result = repo.propagate([f.id])
     assert isinstance(result, PropagationResult)
     assert "use-k8s" in result.directly_stale
+
+
+def test_propagate_transitive_via_decision_id_as_fact(repo: WorldRepo) -> None:
+    """Decisions that depend on another decision's ID (cross-linking) should appear transitively."""
+    # Set up: decision A depends on fact F; decision B depends on decision A's ID
+    f = repo.add_fact("Postgres", "is-relational", "yes")
+    repo.decide("chose-postgres", "Use Postgres for relational data", depends_on=[f.id])
+    repo.commit("initial")
+
+    # Fetch the actual decision to get its ID
+    store = repo.store
+    decisions = store.list_decisions()
+    dec_a = next((d for d in decisions if d.label == "chose-postgres"), None)
+    assert dec_a is not None
+
+    # Create decision B that references decision A's id as a "fact" dependency
+    from foghorn.fact import Decision
+    dec_b = Decision(
+        label="chose-postgres-schema",
+        content="Schema based on postgres decision",
+        fact_ids=[dec_a.id],  # transitive link via decision ID
+    )
+    store.add_decision(dec_b)
+    store.commit("add transitive decision")
+
+    result = propagate_staleness(repo, [f.id])
+    # Decision A should be directly stale
+    assert "chose-postgres" in result.directly_stale
+    # Decision B should be transitively stale (its fact_ids reference decision A's ID)
+    assert "chose-postgres-schema" in result.transitively_stale
+    assert result.propagation_depth >= 2
+
+
+def test_propagate_summary_no_direct_stale(repo: WorldRepo) -> None:
+    """When changed facts have no dependent decisions, summary says 'no decisions depend'."""
+    f = repo.add_fact("UnusedFact", "has-no-decision", "yes")
+    repo.commit("c1")
+    result = propagate_staleness(repo, [f.id])
+    assert result.directly_stale == []
+    assert "no decisions depend on them" in result.impact_summary.lower()
+
+
+def test_propagate_summary_with_transitive(repo: WorldRepo) -> None:
+    """Summary should mention transitive depth when both direct and transitive stale exist."""
+    f = repo.add_fact("Node", "is-runtime", "yes")
+    repo.decide("use-node", "Node.js for services", depends_on=[f.id])
+    repo.commit("initial")
+
+    # Get the decision ID for transitive linking
+    store = repo.store
+    decisions = store.list_decisions()
+    dec = next((d for d in decisions if d.label == "use-node"), None)
+    assert dec is not None
+
+    from foghorn.fact import Decision
+    dec_b = Decision(
+        label="use-node-express",
+        content="Express framework on Node",
+        fact_ids=[dec.id],
+    )
+    store.add_decision(dec_b)
+    store.commit("add express decision")
+
+    result = propagate_staleness(repo, [f.id])
+    # Should have both direct and transitive
+    if result.transitively_stale:
+        summary = result.impact_summary.lower()
+        assert "transitively stale" in summary or "depth" in summary

@@ -80,6 +80,10 @@ def import_json(path_or_str: str, target_repo: WorldRepo) -> int:
     if not isinstance(data, dict):
         raise ValueError("Export JSON must be a top-level object.")
 
+    version = data.get("foghorn_export_version", 0)
+    if version != 1:
+        raise ValueError(f"Unsupported export version: {version} (expected 1)")
+
     from foghorn.fact import Decision, Fact
 
     store = target_repo.store
