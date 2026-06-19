@@ -213,7 +213,7 @@ class WorldStore:
         # Placeholders are built from "?" * N — no injection risk
         df_sql = (
             "SELECT decision_id, fact_id FROM decision_facts "
-            f"WHERE decision_id IN ({placeholders})"
+            f"WHERE decision_id IN ({placeholders})"  # nosec B608 — placeholders are "?" only
         )
         fact_rows = self._conn.execute(df_sql, decision_ids).fetchall()
 
@@ -242,7 +242,7 @@ class WorldStore:
         placeholders = ",".join("?" * len(decision_ids))
 
         # Batch fetch all decision rows in one query
-        sql_dec = f"SELECT * FROM decisions WHERE id IN ({placeholders})"
+        sql_dec = f"SELECT * FROM decisions WHERE id IN ({placeholders})"  # nosec B608
         rows = self._conn.execute(sql_dec, decision_ids).fetchall()
 
         if not rows:
@@ -252,7 +252,7 @@ class WorldStore:
         # Placeholders are built from "?" * N — no injection risk
         df2_sql = (
             "SELECT decision_id, fact_id FROM decision_facts "
-            f"WHERE decision_id IN ({placeholders})"
+            f"WHERE decision_id IN ({placeholders})"  # nosec B608
         )
         fact_rows = self._conn.execute(df2_sql, decision_ids).fetchall()
 
