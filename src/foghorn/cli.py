@@ -17,7 +17,7 @@ def _repo(ctx: click.Context) -> WorldRepo:
 
 
 @click.group()
-@click.version_option(package_name="foghorn")
+@click.version_option(package_name="foghorn-ai")
 @click.option(
     "--db",
     default=".foghorn/world.db",

@@ -141,7 +141,10 @@ class WorldRepo:
         if since is not None:
             base = since
         else:
-            base = self.store.get_commit(head.parent_id) if head.parent_id else None
+            if head.parent_id is None:
+                # No prior state to compare against; nothing can be stale yet.
+                return []
+            base = self.store.get_commit(head.parent_id)
 
         diff = diff_commits(self.store, base, head)
         return compute_staleness(self.store, diff.changed_fact_ids)

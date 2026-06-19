@@ -5,9 +5,9 @@
 ![foghorn](assets/hero.png)
 
 [![CI](https://github.com/sandeep-alluru/foghorn/actions/workflows/ci.yml/badge.svg)](https://github.com/sandeep-alluru/foghorn/actions/workflows/ci.yml)
-[![PyPI version](https://img.shields.io/pypi/v/foghorn.svg)](https://pypi.org/project/foghorn/)
-[![Python 3.10+](https://img.shields.io/pypi/pyversions/foghorn.svg)](https://pypi.org/project/foghorn/)
-[![Downloads](https://img.shields.io/pypi/dm/foghorn.svg)](https://pypi.org/project/foghorn/)
+[![PyPI version](https://img.shields.io/pypi/v/foghorn-ai.svg)](https://pypi.org/project/foghorn-ai/)
+[![Python 3.10+](https://img.shields.io/pypi/pyversions/foghorn-ai.svg)](https://pypi.org/project/foghorn-ai/)
+[![Downloads](https://img.shields.io/pypi/dm/foghorn-ai.svg)](https://pypi.org/project/foghorn-ai/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![codecov](https://codecov.io/gh/sandeep-alluru/foghorn/branch/main/graph/badge.svg)](https://codecov.io/gh/sandeep-alluru/foghorn)
 [![Typed](https://img.shields.io/badge/types-mypy-blue)](https://mypy-lang.org/)
@@ -67,14 +67,14 @@ Facts and decisions are staged, then committed in batches — exactly like git. 
 | Markdown output | Ready-to-paste GitHub PR comment |
 | FastAPI REST server | `/fact`, `/decide`, `/commit`, `/stale`, `/log` endpoints |
 | MCP server | Model Context Protocol integration for Claude and other agents |
-| 43 tests | Comprehensive test suite covering all layers |
+| 114 tests | Comprehensive test suite covering all layers |
 
 ---
 
 ## Quick Start
 
 ```bash
-pip install foghorn
+pip install foghorn-ai
 ```
 
 ```python
@@ -96,7 +96,8 @@ repo.decide(
 commit = repo.commit("Initial architecture decisions")
 print(commit.id)  # e.g. "a3f8b2c1d4e5f6a7"
 
-# Later — the world changed
+# Later — the world changed: retract the old fact, add the replacement
+repo.retract_fact(f.id)
 repo.add_fact("Redis", "replaced-by", "Valkey")
 repo.commit("Redis EOL notice")
 
@@ -123,6 +124,7 @@ foghorn [--db PATH] COMMAND [OPTIONS]
 | `diff` | Show fact changes between HEAD and parent | `--format {rich,json,markdown}` |
 | `log` | Show commit history | — |
 | `status` | Show staged item count and HEAD | — |
+| `recommend` | Show actionable recommendations for all stale decisions | — |
 
 **Global options:**
 
@@ -253,9 +255,12 @@ foghorn/
 │       ├── staleness.py      # DiffResult, diff_commits(), compute_staleness()
 │       ├── repo.py           # WorldRepo high-level API
 │       ├── report.py         # print_stale(), print_diff(), to_json(), to_markdown()
-│       ├── cli.py            # Click CLI (fact, decide, commit, stale, diff, log, status)
+│       ├── export.py         # export_json(), import_json(), export_graphviz()
+│       ├── propagate.py      # propagate_staleness(), PropagationResult
+│       ├── recommend.py      # recommend(), Recommendation
+│       ├── cli.py            # Click CLI (fact, decide, commit, stale, diff, log, status, recommend)
 │       ├── api.py            # FastAPI REST server
-│       └── mcp_server.py     # MCP server
+│       └── mcp_server.py     # MCP server (list_facts, record_decision, commit, check_stale)
 ├── tests/
 │   ├── test_fact.py          # Fact, Decision, StalenessAlert unit tests
 │   ├── test_store.py         # WorldStore + WorldCommit tests

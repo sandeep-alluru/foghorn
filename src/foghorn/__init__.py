@@ -12,7 +12,7 @@ from foghorn.repo import WorldRepo
 from foghorn.staleness import DiffResult, compute_staleness, diff_commits
 from foghorn.store import WorldCommit, WorldStore
 
-__version__ = _version("foghorn")
+__version__ = _version("foghorn-ai")
 
 __all__ = [
     "Decision",
