@@ -57,6 +57,9 @@ Documentation = "https://sandeep-alluru.github.io/foghorn"
 Changelog     = "https://github.com/sandeep-alluru/foghorn/blob/main/CHANGELOG.md"
 Issues        = "https://github.com/sandeep-alluru/foghorn/issues"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/foghorn"]
+
 [tool.ruff]
 line-length    = 100
 target-version = "py310"
