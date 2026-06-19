@@ -22,6 +22,7 @@ try:
     import mcp.server.stdio as _mcp_stdio
     import mcp.types as _mcp_types
     from mcp.server import Server as _Server
+
     _HAS_MCP = True
 except ImportError:
     _HAS_MCP = False
@@ -48,7 +49,10 @@ def run_server() -> None:
                     "properties": {
                         "repo_path": {
                             "type": "string",
-                            "description": "Path to the foghorn database file (e.g. .foghorn/world.db).",
+                            "description": (
+                                "Path to the foghorn database file"
+                                " (e.g. .foghorn/world.db)."
+                            ),
                         },
                     },
                     "required": ["repo_path"],
@@ -69,7 +73,10 @@ def run_server() -> None:
                         },
                         "decision": {
                             "type": "string",
-                            "description": "Short slug label for the decision (e.g. 'chose-redis').",
+                            "description": (
+                                "Short slug label for the decision"
+                                " (e.g. 'chose-redis')."
+                            ),
                         },
                         "rationale": {
                             "type": "string",

@@ -125,7 +125,7 @@ def export_graphviz(repo: WorldRepo) -> str:
 
     lines: list[str] = [
         "digraph foghorn {",
-        '  rankdir=LR;',
+        "  rankdir=LR;",
         '  node [fontname="Helvetica", fontsize=10];',
         "",
         "  // Facts",
@@ -145,8 +145,7 @@ def export_graphviz(repo: WorldRepo) -> str:
     for dec in decisions:
         label = dec.label.replace('"', '\\"')
         lines.append(
-            f'  "dec_{dec.id}" [shape=box, style=filled, fillcolor="#ffe0b0",'
-            f' label="{label}"];'
+            f'  "dec_{dec.id}" [shape=box, style=filled, fillcolor="#ffe0b0", label="{label}"];'
         )
 
     lines.append("")

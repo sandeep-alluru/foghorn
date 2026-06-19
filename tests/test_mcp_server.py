@@ -28,4 +28,4 @@ def test_run_server_prints_error_when_mcp_missing(capsys) -> None:
     with patch.object(mcp_mod, "_HAS_MCP", False), pytest.raises(SystemExit):
         mcp_mod.run_server()
     captured = capsys.readouterr()
-    assert "foghorn[mcp]" in captured.err
+    assert "foghorn-ai[mcp]" in captured.err

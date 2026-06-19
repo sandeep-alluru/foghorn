@@ -100,9 +100,7 @@ def propagate_staleness(repo: WorldRepo, changed_fact_ids: list[str]) -> Propaga
     n_facts = len(changed_fact_ids)
 
     if n_direct == 0:
-        summary = (
-            f"{n_facts} fact(s) changed but no decisions depend on them directly."
-        )
+        summary = f"{n_facts} fact(s) changed but no decisions depend on them directly."
     elif n_transitive == 0:
         summary = (
             f"{n_facts} fact(s) changed → {n_direct} decision(s) directly stale "
