@@ -50,8 +50,7 @@ def run_server() -> None:
                         "repo_path": {
                             "type": "string",
                             "description": (
-                                "Path to the foghorn database file"
-                                " (e.g. .foghorn/world.db)."
+                                "Path to the foghorn database file (e.g. .foghorn/world.db)."
                             ),
                         },
                     },
@@ -74,8 +73,7 @@ def run_server() -> None:
                         "decision": {
                             "type": "string",
                             "description": (
-                                "Short slug label for the decision"
-                                " (e.g. 'chose-redis')."
+                                "Short slug label for the decision (e.g. 'chose-redis')."
                             ),
                         },
                         "rationale": {
