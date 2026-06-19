@@ -12,7 +12,7 @@
 Read the research spec, then design the core data model: content-addressed fact snapshots + belief-commit DAG.
 
 ## MVP definition
-- `pip install foghorn` works
+- `pip install foghorn-ai` works
 - CLI: `foghorn commit "Alice is CEO"`, `foghorn diff HEAD~1`, `foghorn log`, `foghorn merge`
 - Content-addressed immutable fact snapshots (hyperedges)
 - DAG of belief commits (mutable refs)

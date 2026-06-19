@@ -14,7 +14,7 @@ Or use the CLI directly:
 
 ```yaml
 - name: Install foghorn
-  run: pip install foghorn
+  run: pip install foghorn-ai
 
 - name: Run foghorn
   run: foghorn --help

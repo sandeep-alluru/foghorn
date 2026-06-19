@@ -1,7 +1,7 @@
 """FastAPI REST wrapper for foghorn.
 
 Start:   uvicorn foghorn.api:app --reload
-Install: pip install "foghorn[api]"
+Install: pip install "foghorn-ai[api]"
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ try:
     from fastapi import FastAPI, HTTPException
     from pydantic import BaseModel, Field
 except ImportError as exc:
-    raise ImportError("API server requires: pip install 'foghorn[api]'") from exc
+    raise ImportError("API server requires: pip install 'foghorn-ai[api]'") from exc
 
 from foghorn import __version__
 from foghorn.repo import WorldRepo

@@ -154,7 +154,7 @@ When DevOps called `update_approved_tools()` after the Redis relicensing, `propa
 
 ```bash
 # Install foghorn
-pip install foghorn
+pip install foghorn-ai
 
 # Initialize a repo, add facts, make a decision, then update a fact and check staleness
 python -c "

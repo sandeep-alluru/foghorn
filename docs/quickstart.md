@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-pip install foghorn
+pip install foghorn-ai
 ```
 
 ## Step 1

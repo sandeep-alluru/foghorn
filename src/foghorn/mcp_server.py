@@ -30,7 +30,7 @@ except ImportError:
 def run_server() -> None:
     """Start the MCP server on stdio."""
     if not _HAS_MCP:
-        print("MCP server requires: pip install 'foghorn[mcp]'", file=sys.stderr)
+        print("MCP server requires: pip install 'foghorn-ai[mcp]'", file=sys.stderr)
         sys.exit(1)
 
     from foghorn.repo import WorldRepo

@@ -5,7 +5,7 @@ foghorn ships an MCP server that exposes its core operations as native Claude to
 ## Install
 
 ```bash
-pip install "foghorn[mcp]"
+pip install "foghorn-ai[mcp]"
 ```
 
 ## Add to Claude Desktop

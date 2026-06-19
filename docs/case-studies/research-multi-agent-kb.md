@@ -173,7 +173,7 @@ When Scout discovers the corrected $847M revenue figure and calls `record_market
 
 ```bash
 # Install foghorn
-pip install foghorn
+pip install foghorn-ai
 
 # Simulate a two-agent staleness scenario
 python -c "

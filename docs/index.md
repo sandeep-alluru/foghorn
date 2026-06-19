@@ -10,7 +10,7 @@
 ## Install
 
 ```bash
-pip install foghorn
+pip install foghorn-ai
 ```
 
 ## Quick example
