@@ -216,5 +216,59 @@ def status(ctx: click.Context) -> None:
         click.echo(f"{staged} staged item(s) ready to commit.")
 
 
+@main.command()
+@click.pass_context
+def recommend(ctx: click.Context) -> None:
+    """Show actionable recommendations for all stale decisions.
+
+    \b
+    Examples:
+      foghorn recommend
+      foghorn --db /path/to/world.db recommend
+    """
+    from rich.console import Console
+    from rich.table import Table
+
+    from foghorn.recommend import recommend as _recommend
+
+    with _repo(ctx) as repo:
+        recs = _recommend(repo)
+
+    if not recs:
+        click.echo("No stale decisions — everything looks fresh!")
+        return
+
+    console = Console()
+    table = Table(
+        show_header=True,
+        header_style="bold",
+        box=None,
+        padding=(0, 1),
+    )
+    table.add_column("Decision", style="bold", min_width=20)
+    table.add_column("Priority", width=10)
+    table.add_column("Action", width=14)
+    table.add_column("Reason")
+
+    priority_colors = {
+        "critical": "bold red",
+        "high": "red",
+        "medium": "yellow",
+        "low": "dim",
+    }
+
+    for rec in recs:
+        color = priority_colors.get(rec.priority, "")
+        table.add_row(
+            rec.decision_label,
+            f"[{color}]{rec.priority}[/{color}]",
+            rec.action,
+            rec.reason[:80],
+        )
+
+    console.print(table)
+    console.print(f"\n[dim]{len(recs)} recommendation(s)[/dim]")
+
+
 if __name__ == "__main__":
     main()

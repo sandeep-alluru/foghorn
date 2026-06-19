@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from foghorn.fact import Decision, Fact, StalenessAlert
 from foghorn.staleness import DiffResult, compute_staleness, diff_commits
 from foghorn.store import WorldCommit, WorldStore
+
+if TYPE_CHECKING:
+    from foghorn.propagate import PropagationResult
+    from foghorn.recommend import Recommendation
 
 
 class WorldRepo:
@@ -172,6 +176,47 @@ class WorldRepo:
     def log(self) -> list[WorldCommit]:
         """Return all commits from HEAD to root, newest first."""
         return self.store.log()
+
+    # ── New convenience methods ────────────────────────────────────────────────
+
+    def export_json(self) -> str:
+        """Export the entire repository state as a JSON string.
+
+        Delegates to :func:`foghorn.export.export_json`.
+
+        Returns:
+            A JSON string with all facts, decisions, and commits.
+        """
+        from foghorn.export import export_json
+
+        return export_json(self)
+
+    def recommend(self) -> list[Recommendation]:
+        """Generate actionable staleness recommendations.
+
+        Delegates to :func:`foghorn.recommend.recommend`.
+
+        Returns:
+            Sorted list of :class:`~foghorn.recommend.Recommendation` objects.
+        """
+        from foghorn.recommend import recommend
+
+        return recommend(self)
+
+    def propagate(self, fact_ids: list[str]) -> PropagationResult:
+        """Propagate staleness from a set of changed facts.
+
+        Delegates to :func:`foghorn.propagate.propagate_staleness`.
+
+        Args:
+            fact_ids: IDs of facts that have changed.
+
+        Returns:
+            A :class:`~foghorn.propagate.PropagationResult` with stale decisions.
+        """
+        from foghorn.propagate import propagate_staleness
+
+        return propagate_staleness(self, fact_ids)
 
     def close(self) -> None:
         """Close the underlying database connection."""
