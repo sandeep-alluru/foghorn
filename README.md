@@ -233,6 +233,15 @@ Endpoints: `GET /health`, `POST /fact`, `POST /decide`, `POST /commit`, `GET /st
 
 ---
 
+## Case Studies
+
+See how teams are using foghorn in production:
+
+- [Preventing Stale Architecture Decisions in a Coding Assistant](docs/case-studies/devtools-coding-agent-staleness.md)
+- [Eliminating Cross-Agent Data Inconsistency in a Multi-Agent Research Pipeline](docs/case-studies/research-multi-agent-kb.md)
+
+---
+
 ## Repository structure
 
 ```
