@@ -292,3 +292,10 @@ Suggested topics for discoverability:
 ---
 
 [![Star History Chart](https://api.star-history.com/svg?repos=sandeep-alluru/foghorn&type=Date)](https://star-history.com/#sandeep-alluru/foghorn&Date)
+
+---
+
+## Stay Updated
+
+Subscribe to [**The Silence Layer**](https://newsletter.salluru.dev) — weekly dispatches on production AI infrastructure, new releases, and the failure modes that production AI systems don't surface until it's too late.
+
