@@ -1,18 +1,10 @@
-name: foghorn
-displayName: "Foghorn"
-description: "Decision staleness alerts — warns when a fact an agent relied on has changed"
-license: MIT
-homepage: https://github.com/sandeep-alluru/foghorn
-repository: https://github.com/sandeep-alluru/foghorn
-keywords:
-  - ai-agents
-  - staleness
-  - agent-memory
-  - mcp
 startCommand:
   type: stdio
   configSchema:
     type: object
     properties: {}
   commandFunction: |-
-    (config) => ({ command: "python", args: ["-m", "foghorn.mcp_server"] })
+    (config) => ({
+      command: 'uvx',
+      args: ['foghorn-mcp']
+    })
