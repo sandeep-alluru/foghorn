@@ -1,0 +1,40 @@
+{
+  "$schema": "https://agenticresourcediscovery.org/schema/v1/catalog.json",
+  "version": "1.0.0",
+  "name": "Foghorn",
+  "description": "Decision staleness alerts for AI agents",
+  "publisher": {
+    "name": "Sandeep Alluru",
+    "email": "onepuncchh@gmail.com",
+    "url": "https://github.com/sandeep-alluru"
+  },
+  "tools": [
+    {
+      "id": "io.github.sandeep-alluru/foghorn",
+      "name": "foghorn",
+      "title": "Foghorn",
+      "description": "Decision staleness alerts for AI agents",
+      "version": "0.1.2",
+      "protocol": "mcp",
+      "transport": "stdio",
+      "install": {
+        "pypi": {
+          "package": "foghorn-ai",
+          "extras": [
+            "mcp"
+          ],
+          "runtimeHint": "uvx"
+        }
+      },
+      "invocation": {
+        "command": "foghorn-mcp"
+      },
+      "repository": {
+        "url": "https://github.com/sandeep-alluru/foghorn",
+        "source": "github"
+      },
+      "homepage": "https://github.com/sandeep-alluru/foghorn",
+      "license": "MIT"
+    }
+  ]
+}
