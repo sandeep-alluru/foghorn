@@ -105,6 +105,7 @@ def test_propagate_transitive_via_decision_id_as_fact(repo: WorldRepo) -> None:
 
     # Create decision B that references decision A's id as a "fact" dependency
     from foghorn.fact import Decision
+
     dec_b = Decision(
         label="chose-postgres-schema",
         content="Schema based on postgres decision",
@@ -143,6 +144,7 @@ def test_propagate_summary_with_transitive(repo: WorldRepo) -> None:
     assert dec is not None
 
     from foghorn.fact import Decision
+
     dec_b = Decision(
         label="use-node-express",
         content="Express framework on Node",

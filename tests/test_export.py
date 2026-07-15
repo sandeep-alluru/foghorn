@@ -100,6 +100,7 @@ def test_repo_export_json_convenience(populated_repo: WorldRepo) -> None:
 def test_import_json_wrong_version_raises(tmp_path, populated_repo: WorldRepo) -> None:
     """import_json should raise ValueError if export version is not 1."""
     import json as json_mod
+
     bad_export = json_mod.dumps({"foghorn_export_version": 99, "facts": [], "decisions": []})
     target_db = tmp_path / "target_v99.db"
     target = WorldRepo.init(str(target_db))
@@ -113,6 +114,7 @@ def test_import_json_wrong_version_raises(tmp_path, populated_repo: WorldRepo) -
 def test_import_json_missing_version_raises(tmp_path, populated_repo: WorldRepo) -> None:
     """import_json should raise ValueError if foghorn_export_version key is missing."""
     import json as json_mod
+
     bad_export = json_mod.dumps({"facts": [], "decisions": []})  # no version key
     target_db = tmp_path / "target_no_ver.db"
     target = WorldRepo.init(str(target_db))
@@ -137,6 +139,7 @@ def test_import_json_invalid_json_raises(tmp_path, populated_repo: WorldRepo) ->
 def test_import_json_non_dict_raises(tmp_path, populated_repo: WorldRepo) -> None:
     """import_json should raise ValueError if top-level JSON is not an object."""
     import json as json_mod
+
     target_db = tmp_path / "target_list.db"
     target = WorldRepo.init(str(target_db))
     try:
