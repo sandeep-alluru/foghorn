@@ -96,3 +96,27 @@ def test_head_returns_head_commit(store):
     head = store.head()
     assert head is not None
     assert head.message == "first"
+
+
+def test_list_facts_oldest_first_not_current_state(store):
+    """D-FOGHORN regression: list_facts is chronological; next() is OLDEST, not current.
+
+    Integrators must not treat list_facts() as a LWW current-value store.
+    See docs/CLOSED_LOOP.md and farm memory case D-FOGHORN (2026-07-22).
+    """
+    import time
+
+    f1 = Fact("script", "hash", "aaa", confidence=1.0)
+    store.add_fact(f1)
+    time.sleep(0.02)
+    f2 = Fact("script", "hash", "bbb", confidence=1.0)
+    store.add_fact(f2)
+
+    facts = store.list_facts()
+    script_facts = [f for f in facts if f.subject == "script" and f.predicate == "hash"]
+    assert len(script_facts) >= 2
+    # Ordered by recorded_at ascending → first is oldest
+    assert script_facts[0].object == "aaa"
+    assert script_facts[-1].object == "bbb"
+    # The Foundry bug class: next(iter(list_facts())) or facts[0] is NOT latest
+    assert next(iter(script_facts)).object != "bbb"
