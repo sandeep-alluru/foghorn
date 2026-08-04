@@ -299,3 +299,7 @@ Suggested topics for discoverability:
 
 Subscribe to [**The Silence Layer**](https://newsletter.salluru.dev) — weekly dispatches on production AI infrastructure, new releases, and the failure modes that production AI systems don't surface until it's too late.
 
+
+## Closed loop / Non-Ornament
+
+See [docs/CLOSED_LOOP.md](docs/CLOSED_LOOP.md) for when this library is load-bearing vs ornamental, and when **not** to use it.
