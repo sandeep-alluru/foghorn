@@ -1,6 +1,6 @@
 # Closed loop — `foghorn`
 
-**Status:** stub (eagle-eyes Phase 0 / 2026-08-04)  
+**Status:** reader wired (eagle-eyes / 2026-08-04)  
 **Owner loop:** L6
 
 ## Load-bearing job
@@ -9,11 +9,13 @@ Fact→decision dependency staleness alerts
 
 ## Who reads the output?
 
-Pipeline or Jarvis L6 reads StalenessAlert before re-using a decision
+- Library API: `foghorn.gate_staleness` / `assert_fresh` (`closed_loop.py`)
+- Pipeline or Jarvis L6 reads `StalenessAlert` before re-using a decision
+- CLI: `foghorn stale --exit-code`
 
 ## What outcome changes?
 
-Skip reuse / force recompute when impact high
+Skip reuse / force recompute when impact high; empty world or LWW misuse → FAIL_LOUD
 
 ## When NOT to use (anti-ornament)
 
@@ -21,10 +23,10 @@ NEVER use as LWW episode/current-state store (D-FOGHORN: oldest-fact next() wipe
 
 ## Non-Ornament checklist
 
-- [ ] Reader implemented in CI, gate, or eagle-eyes script
-- [ ] Empty/wrong output fails loudly
-- [ ] Not exposed as free MCP in product agents
-- [ ] Linked gap IDs in mem0 when improving
+- [x] Reader implemented in CI, gate, or eagle-eyes script (`gate_staleness` + tests)
+- [x] Empty/wrong output fails loudly (`FAIL_LOUD`, exit 2)
+- [x] Not exposed as free MCP in product agents (import/CI gate only)
+- [x] Linked gap IDs in mem0 when improving (D-FOGHORN regression + mode guard)
 
 ## Related failures (farm memory)
 
@@ -34,20 +36,4 @@ NEVER use as LWW episode/current-state store (D-FOGHORN: oldest-fact next() wipe
 
 ## Daily rotation note
 
-This file exists so pillar **C (closed loop)** can rise with real wiring over time. Prefer small daily commits that move a checkbox toward done.
-
-## Auto-run 2026-08-04
-- pytest_rc: 0
-- node: clawer-samurai-2
-
-## Auto-run 2026-08-04
-- pytest_rc: 0
-- node: clawer-samurai-2
-
-## Auto-run 2026-08-04
-- pytest_rc: 0
-- node: clawer-samurai-2
-
-## Auto-run 2026-08-04
-- pytest_rc: 0
-- node: clawer-samurai-2
+Prefer small daily commits that raise scorer pillars or finish remaining wiring (CI job invoking gate).
