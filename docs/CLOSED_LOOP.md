@@ -37,3 +37,7 @@ NEVER use as LWW episode/current-state store (D-FOGHORN: oldest-fact next() wipe
 ## Daily rotation note
 
 Prefer small daily commits that raise scorer pillars or finish remaining wiring (CI job invoking gate).
+
+## Auto-run 2026-08-04
+- pytest_rc: 0
+- node: clawer-samurai-2
