@@ -162,9 +162,68 @@ class WorldStore:
         return Fact.from_dict(dict(row))
 
     def list_facts(self) -> list[Fact]:
-        """Return all stored Facts ordered by recorded_at."""
+        """Return all stored Facts ordered by recorded_at (oldest first).
+
+        **D-FOGHORN warning:** this is an append-oriented history view.
+        Do **not** use ``next(iter(list_facts()))`` or ``list_facts()[0]`` as
+        the "current" value of a subject/predicate — that is the *oldest*
+        fact and caused full pipeline recaptures in production (Pioneer
+        Content Foundry, 2026-07-22). Use :meth:`latest_fact` or
+        :meth:`list_facts_for` instead.
+        """
         rows = self._conn.execute("SELECT * FROM facts ORDER BY recorded_at").fetchall()
         return [Fact.from_dict(dict(r)) for r in rows]
+
+    def list_facts_for(self, subject: str, predicate: str | None = None) -> list[Fact]:
+        """Return facts for a subject (and optional predicate), oldest first.
+
+        Use this when you need the *history* of a key. For the single current
+        value of ``(subject, predicate)``, prefer :meth:`latest_fact`.
+        """
+        if predicate is None:
+            rows = self._conn.execute(
+                "SELECT * FROM facts WHERE subject=? ORDER BY recorded_at",
+                (subject,),
+            ).fetchall()
+        else:
+            rows = self._conn.execute(
+                "SELECT * FROM facts WHERE subject=? AND predicate=? ORDER BY recorded_at",
+                (subject, predicate),
+            ).fetchall()
+        return [Fact.from_dict(dict(r)) for r in rows]
+
+    def latest_fact(self, subject: str, predicate: str) -> Fact | None:
+        """Return the most recently *recorded* fact for ``(subject, predicate)``.
+
+        Real-world case (Qdrant / farm_memory D-FOGHORN): Foundry modules treated
+        ``list_facts()`` as a LWW current-state map and took ``next(...)`` →
+        oldest object → false ``script_changed`` → wiped all frame dirs (~95 min
+        recapture). This method is the correct reader for "what is the current
+        value of this key in the append-only log?"
+
+        Note: Fact IDs are content-addressed on ``subject|predicate|object``, so
+        changing the object creates a new row; "current" = max(recorded_at).
+        """
+        row = self._conn.execute(
+            "SELECT * FROM facts WHERE subject=? AND predicate=? "
+            "ORDER BY recorded_at DESC LIMIT 1",
+            (subject, predicate),
+        ).fetchone()
+        if row is None:
+            return None
+        return Fact.from_dict(dict(row))
+
+    def current_fact_map(self) -> dict[tuple[str, str], Fact]:
+        """Map each ``(subject, predicate)`` to its latest recorded Fact.
+
+        Safe replacement for the anti-pattern of scanning ``list_facts()`` in
+        insertion order and treating the first hit as current.
+        """
+        # One pass: list ordered by recorded_at ascending, last write wins per key
+        current: dict[tuple[str, str], Fact] = {}
+        for fact in self.list_facts():
+            current[(fact.subject, fact.predicate)] = fact
+        return current
 
     # ── Decisions ─────────────────────────────────────────────────────────────
 

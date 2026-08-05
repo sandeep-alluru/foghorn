@@ -120,3 +120,37 @@ def test_list_facts_oldest_first_not_current_state(store):
     assert script_facts[-1].object == "bbb"
     # The Foundry bug class: next(iter(list_facts())) or facts[0] is NOT latest
     assert next(iter(script_facts)).object != "bbb"
+
+
+def test_latest_fact_returns_newest_not_oldest(store):
+    """D-FOGHORN product fix: current value of (subject, predicate) is max(recorded_at)."""
+    import time
+
+    f1 = Fact("script", "hash", "aaa", confidence=1.0, recorded_at=1000.0)
+    f2 = Fact("script", "hash", "bbb", confidence=1.0, recorded_at=2000.0)
+    # insert oldest first then newest
+    store.add_fact(f1)
+    store.add_fact(f2)
+
+    latest = store.latest_fact("script", "hash")
+    assert latest is not None
+    assert latest.object == "bbb"
+    # history still oldest-first
+    hist = store.list_facts_for("script", "hash")
+    assert [f.object for f in hist] == ["aaa", "bbb"]
+    # anti-pattern would return aaa
+    assert next(iter(hist)).object == "aaa"
+    assert next(iter(hist)).object != latest.object
+
+
+def test_current_fact_map_lww_per_key(store):
+    store.add_fact(Fact("script", "hash", "old", recorded_at=1.0))
+    store.add_fact(Fact("script", "hash", "new", recorded_at=9.0))
+    store.add_fact(Fact("audio", "hash", "x", recorded_at=5.0))
+    m = store.current_fact_map()
+    assert m[("script", "hash")].object == "new"
+    assert m[("audio", "hash")].object == "x"
+
+
+def test_latest_fact_missing_returns_none(store):
+    assert store.latest_fact("nope", "missing") is None

@@ -49,3 +49,10 @@ Prefer small daily commits that raise scorer pillars or finish remaining wiring 
 ## Auto-run 2026-08-05
 - pytest_rc: 0
 - node: clawer-samurai-2
+
+## Product fix from Qdrant case D-FOGHORN (2026-08-05)
+
+- `WorldStore.latest_fact(subject, predicate)` — current value in append-only log
+- `list_facts_for` / `current_fact_map` — safe readers
+- `list_facts` docstring warns against `next(iter(...))` anti-pattern
+- See `docs/REAL_WORLD_CASES.md`
