@@ -56,3 +56,7 @@ Prefer small daily commits that raise scorer pillars or finish remaining wiring 
 - `list_facts_for` / `current_fact_map` — safe readers
 - `list_facts` docstring warns against `next(iter(...))` anti-pattern
 - See `docs/REAL_WORLD_CASES.md`
+
+## Auto-run 2026-08-05
+- pytest_rc: 0
+- node: clawer-samurai-2
