@@ -5,11 +5,16 @@ from __future__ import annotations
 from importlib.metadata import version as _version
 
 from foghorn.closed_loop import (
+    DEFAULT_MAX_SOURCE_AGE_SECONDS,
+    DEFAULT_SOURCE_PREDICATES,
     ClosedLoopError,
     GateOutcome,
     assert_fresh,
     assert_not_current_state_store,
+    assert_sources_fresh,
+    gate_source_freshness,
     gate_staleness,
+    is_source_predicate,
 )
 from foghorn.export import export_graphviz, export_json, import_json
 from foghorn.fact import Decision, Fact, StalenessAlert
@@ -23,6 +28,8 @@ __version__ = _version("foghorn-ai")
 
 __all__ = [
     "ClosedLoopError",
+    "DEFAULT_MAX_SOURCE_AGE_SECONDS",
+    "DEFAULT_SOURCE_PREDICATES",
     "Decision",
     "DiffResult",
     "Fact",
@@ -35,12 +42,15 @@ __all__ = [
     "WorldStore",
     "assert_fresh",
     "assert_not_current_state_store",
+    "assert_sources_fresh",
     "compute_staleness",
     "diff_commits",
     "export_graphviz",
     "export_json",
+    "gate_source_freshness",
     "gate_staleness",
     "import_json",
+    "is_source_predicate",
     "propagate_staleness",
     "recommend",
 ]
