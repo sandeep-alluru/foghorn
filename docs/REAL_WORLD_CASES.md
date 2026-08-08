@@ -63,8 +63,51 @@ deep-dive suggestions (AgentExecutor / retrieval-grounded agents).
 retrieved wiki/docs. Pair with `gate_staleness` for decision-edge churn.
 Age gate is not optional if the agent cites docs.
 
+## Case ACTIVITY-FRAMES — deterministic screen-activity memory (arXiv 2608.05784)
+
+**Source:** Track B public research (`20260808T041217Z` and prior sessions) —
+[Activity Frames: Deterministic Screen-Activity Compilation for Agent Memory](https://arxiv.org/abs/2608.05784).
+
+**What fails:**
+
+1. Computer-use agents re-pay frontier inference to re-derive routines the user
+   already performed because agent memory records what the user *said*, not what
+   the user *did*.
+2. LLM summaries of raw screen capture are used as day memory — paper reports
+   ~66–80% accuracy vs ~98% for compiled frames.
+3. Raw uncompiled capture is too large and non-auditable as a prompt block;
+   no evidence pointers back to raw rows.
+
+**Product in this repo:**
+
+| Control | API |
+|---------|-----|
+| Raw row / frame types | `RawCaptureRow`, `ActivityFrame` |
+| Deterministic compiler | `compile_activity_frames` (app/site/gap split, zero-model) |
+| Stable id | `activity_frame_fingerprint` (SHA-256, byte-identical) |
+| Validity | `frame_is_valid` (timing + non-empty evidence_ptrs) |
+| Memory gate | `gate_activity_memory(memory_mode=…)` |
+| Raise form | `assert_activity_memory_ok` |
+
+**Rules (load-bearing):**
+
+- `memory_mode=llm_summary` → **FAIL** (refuse summary-only activity memory)
+- `memory_mode=raw_uncompiled` → **FAIL** (must compile first)
+- No frames when required → **FAIL_LOUD**
+- Frame without evidence pointers → **FAIL_LOUD**
+- `frame_id` ≠ deterministic fingerprint → **FAIL** (tamper / model rewrite)
+- Claimed frame ids not in inventory → **FAIL**
+- Valid compiled frames with evidence → **PASS**
+
+**Tests:** `tests/test_activity_frames.py` — arXiv day-activity fixture.
+
+**Non-Ornament:** Call `gate_activity_memory` **before** answering questions
+about a session day or replaying a routine from screen memory. Pair with
+`gate_staleness` / `gate_source_freshness` for fact→decision edges and wiki age.
+
 ## Related farm lessons
 - Writer fixed without tracing readers (cache key bugs)
 - Silent success / vacuous guards
 - MCP write-only tools are ornaments
 - Amazon Q stale wiki — wall-clock source age (this section)
+- Activity Frames — compile + refuse LLM-summary memory (this section)
