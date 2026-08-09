@@ -45,8 +45,8 @@ dev = [
 ]
 mcp = ["mcp>=1.0"]
 docs = [
-    "mkdocs>=1.5",
-    "mkdocs-material>=9.0",
+    "mkdocs>=1.5,<2",
+    "mkdocs-material>=9.0,<10",
     "mkdocstrings[python]>=0.25",
 ]
 api = ["fastapi>=0.110", "uvicorn>=0.29"]
