@@ -60,7 +60,7 @@ def test_stale_returns_alerts_after_fact_changes(repo):
     f = repo.add_fact("Redis", "is-appropriate-for", "rate-limiting")
     repo.decide("chose-redis", "Redis fits", depends_on=[f.id])
     repo.commit("first")
-    # Add a contradictory fact and commit — old fact disappears from staging view
+    # Add a contradictory fact and commit - old fact disappears from staging view
     repo.add_fact("Valkey", "replaced", "Redis")
     repo.commit("second")
     # diff HEAD vs parent should detect the new fact

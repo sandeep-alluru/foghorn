@@ -1,4 +1,4 @@
-"""Tests for foghorn.propagate — PropagationResult and propagate_staleness."""
+"""Tests for foghorn.propagate - PropagationResult and propagate_staleness."""
 
 from __future__ import annotations
 
@@ -43,7 +43,7 @@ def test_propagate_no_stale_for_unrelated_fact(repo: WorldRepo) -> None:
     repo.decide("chose-redis", "Redis is fast", depends_on=[f1.id])
     repo.commit("c1")
 
-    # Only f2 changed — decision depends on f1
+    # Only f2 changed - decision depends on f1
     result = propagate_staleness(repo, [f2.id])
     assert "chose-redis" not in result.directly_stale
 

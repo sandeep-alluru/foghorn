@@ -1,4 +1,4 @@
-"""Fact and Decision data models — the content-addressed primitives of foghorn."""
+"""Fact and Decision data models - the content-addressed primitives of foghorn."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ class Fact:
     and object always have the same ID, regardless of when they were recorded.
 
     Attributes:
-        id: Content-addressed identifier — SHA-256[:16] of "{subject}|{predicate}|{object}".
+        id: Content-addressed identifier - SHA-256[:16] of "{subject}|{predicate}|{object}".
         subject: The entity this fact is about (e.g. "Redis").
         predicate: The relationship being asserted (e.g. "is-appropriate-for").
         object: The value of the assertion (e.g. "rate-limiting").
@@ -74,7 +74,7 @@ class Decision:
     Fact listed in ``fact_ids`` changes, this Decision is marked stale.
 
     Attributes:
-        id: Content-addressed identifier — SHA-256[:16] of "{label}|{content}".
+        id: Content-addressed identifier - SHA-256[:16] of "{label}|{content}".
         label: Short slug describing the decision (e.g. "chose-redis-for-rate-limiting").
         content: Full reasoning text or justification.
         fact_ids: IDs of the Facts this decision directly depended on.

@@ -1,4 +1,4 @@
-"""foghorn — Decision staleness alerts for AI agents."""
+"""foghorn - Decision staleness alerts for AI agents."""
 
 from __future__ import annotations
 
@@ -37,11 +37,11 @@ from foghorn.store import WorldCommit, WorldStore
 __version__ = _version("foghorn-ai")
 
 __all__ = [
-    "ActivityFrame",
-    "ClosedLoopError",
     "DEFAULT_GAP_SPLIT_SECONDS",
     "DEFAULT_MAX_SOURCE_AGE_SECONDS",
     "DEFAULT_SOURCE_PREDICATES",
+    "ActivityFrame",
+    "ClosedLoopError",
     "Decision",
     "DiffResult",
     "Fact",

@@ -1,4 +1,4 @@
-"""High-level WorldRepo — the main entry point for foghorn operations."""
+"""High-level WorldRepo - the main entry point for foghorn operations."""
 
 from __future__ import annotations
 
@@ -109,7 +109,7 @@ class WorldRepo:
             ValueError: If there is nothing staged to commit.
         """
         if self.store.staged_count() == 0:
-            raise ValueError("Nothing to commit — stage facts or decisions first.")
+            raise ValueError("Nothing to commit - stage facts or decisions first.")
         return self.store.commit(message)
 
     def retract_fact(self, fact_id: str) -> None:

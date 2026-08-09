@@ -124,7 +124,6 @@ def test_list_facts_oldest_first_not_current_state(store):
 
 def test_latest_fact_returns_newest_not_oldest(store):
     """D-FOGHORN product fix: current value of (subject, predicate) is max(recorded_at)."""
-    import time
 
     f1 = Fact("script", "hash", "aaa", confidence=1.0, recorded_at=1000.0)
     f2 = Fact("script", "hash", "bbb", confidence=1.0, recorded_at=2000.0)

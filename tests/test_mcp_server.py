@@ -1,4 +1,4 @@
-"""Tests for foghorn.mcp_server — import guard and run_server()."""
+"""Tests for foghorn.mcp_server - import guard and run_server()."""
 
 from __future__ import annotations
 

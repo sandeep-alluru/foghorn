@@ -1,9 +1,9 @@
-"""Activity Frames — deterministic screen-activity memory (arXiv 2608.05784).
+"""Activity Frames - deterministic screen-activity memory (arXiv 2608.05784).
 
 Public case: Activity Frames (Track B / arXiv 2608.05784). Computer-use agents
 re-derive routines the user already performed because agent memory records what
 the user *said*, not what the user *did*. LLM summaries of raw capture lose
-fidelity (paper: ~66–80% vs ~98% for compiled frames).
+fidelity (paper: ~66-80% vs ~98% for compiled frames).
 
 Product role in foghorn:
   Compile passively captured screen rows into typed, byte-identical activity
@@ -19,9 +19,11 @@ Non-Ornament:
 from __future__ import annotations
 
 import hashlib
+import itertools
 import json
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Literal, Sequence
+from typing import Any, Literal
 
 from foghorn.closed_loop import ClosedLoopError, GateOutcome
 
@@ -68,7 +70,7 @@ class ActivityFrame:
     """Compiled typed activity frame (deterministic, zero-model).
 
     Bounded episode carrying application, site, timing, input volume, and
-    evidence pointers back to raw rows — byte-identical and cacheable.
+    evidence pointers back to raw rows - byte-identical and cacheable.
     """
 
     frame_id: str
@@ -157,7 +159,7 @@ def compile_activity_frames(
 ) -> list[ActivityFrame]:
     """Segment raw capture into typed activity frames (deterministic, zero-model).
 
-    Split rules (all mechanical — no LLM):
+    Split rules (all mechanical - no LLM):
 
     1. Sort by ``timestamp`` ascending (stable on equal timestamps by ``row_id``).
     2. Start a new frame when **application** or **site** changes vs previous row.
@@ -212,7 +214,7 @@ def compile_activity_frames(
             )
         )
 
-    for prev, cur in zip(ordered, ordered[1:]):
+    for prev, cur in itertools.pairwise(ordered):
         app_change = _canon_app(cur.application) != _canon_app(prev.application)
         site_change = _canon_site(cur.site) != _canon_site(prev.site)
         gap = float(cur.timestamp) - float(prev.timestamp)
@@ -234,9 +236,7 @@ def frame_is_valid(frame: ActivityFrame) -> bool:
         return False
     if not frame.evidence_ptrs:
         return False
-    if any(not str(p).strip() for p in frame.evidence_ptrs):
-        return False
-    return True
+    return not any(not str(p).strip() for p in frame.evidence_ptrs)
 
 
 def _frame_from_mapping(item: ActivityFrame | dict[str, Any]) -> ActivityFrame:
@@ -310,9 +310,9 @@ def gate_activity_memory(
 
     Activity Frames class (arXiv 2608.05784):
 
-    * ``memory_mode="llm_summary"`` → **FAIL** — LLM day-summary is not
+    * ``memory_mode="llm_summary"`` → **FAIL** - LLM day-summary is not
       load-bearing memory (paper accuracy gap vs compiled frames).
-    * ``memory_mode="raw_uncompiled"`` → **FAIL** — must compile first.
+    * ``memory_mode="raw_uncompiled"`` → **FAIL** - must compile first.
     * ``memory_mode="compiled"`` with no frames when required → **FAIL_LOUD**.
     * Frame missing evidence pointers → **FAIL_LOUD**.
     * Invalid timing (``t_end < t_start``) → **FAIL**.
@@ -331,7 +331,7 @@ def gate_activity_memory(
 
     if mode == "llm_summary":
         return _fail(
-            "ACTIVITY-FRAMES: memory_mode=llm_summary refused — "
+            "ACTIVITY-FRAMES: memory_mode=llm_summary refused - "
             "LLM summaries of screen capture are not load-bearing activity "
             "memory (arXiv 2608.05784: compiled frames beat summaries). "
             "Compile raw rows with compile_activity_frames and use "
@@ -340,7 +340,7 @@ def gate_activity_memory(
 
     if mode == "raw_uncompiled":
         return _fail(
-            "ACTIVITY-FRAMES: memory_mode=raw_uncompiled refused — "
+            "ACTIVITY-FRAMES: memory_mode=raw_uncompiled refused - "
             "raw capture must be compiled into typed activity frames "
             "(app/site/timing/input_volume/evidence_ptrs) before use as "
             "agent memory. Call compile_activity_frames(...)."
@@ -358,9 +358,7 @@ def gate_activity_memory(
 
     if not compiled and raw_rows is not None:
         try:
-            compiled = compile_activity_frames(
-                raw_rows, gap_split_seconds=gap_split_seconds
-            )
+            compiled = compile_activity_frames(raw_rows, gap_split_seconds=gap_split_seconds)
         except (TypeError, ValueError) as exc:
             return _fail_loud(
                 f"ACTIVITY-FRAMES: compile failed: {exc}",
@@ -368,7 +366,7 @@ def gate_activity_memory(
 
     if require_frames and len(compiled) == 0:
         return _fail_loud(
-            "ACTIVITY-FRAMES: no compiled activity frames — cannot ground "
+            "ACTIVITY-FRAMES: no compiled activity frames - cannot ground "
             "session/day answers on empty activity inventory (record raw "
             "capture then compile_activity_frames)",
             source_count=0,
@@ -389,15 +387,18 @@ def gate_activity_memory(
     for fr in compiled:
         if fr.t_end < fr.t_start:
             invalid_timing.append(fr.frame_id[:16])
-        if require_evidence and not frame_is_valid(fr):
+        if (
+            require_evidence
+            and not frame_is_valid(fr)
+            and (not fr.evidence_ptrs or any(not str(p).strip() for p in fr.evidence_ptrs))
+        ):
             # distinguish timing already caught
-            if not fr.evidence_ptrs or any(not str(p).strip() for p in fr.evidence_ptrs):
-                missing_evidence.append(fr.frame_id[:16] or "(empty-id)")
+            missing_evidence.append(fr.frame_id[:16] or "(empty-id)")
 
     if missing_evidence:
         return _fail_loud(
             f"ACTIVITY-FRAMES: {len(missing_evidence)} frame(s) lack evidence "
-            f"pointers back to raw rows ids={missing_evidence[:8]} — "
+            f"pointers back to raw rows ids={missing_evidence[:8]} - "
             "compiled memory must be mechanically auditable",
             source_count=len(compiled),
         )
@@ -416,7 +417,7 @@ def gate_activity_memory(
         if missing:
             return _fail(
                 f"ACTIVITY-FRAMES: claimed_frame_ids not in compiled inventory "
-                f"missing={missing[:8]} inventory_size={len(inventory)} — "
+                f"missing={missing[:8]} inventory_size={len(inventory)} - "
                 "refuse answers citing uncompiled/unknown frames",
                 source_count=len(compiled),
             )
@@ -437,7 +438,7 @@ def gate_activity_memory(
     if mismatched:
         return _fail(
             f"ACTIVITY-FRAMES: {len(mismatched)} frame_id(s) do not match "
-            f"deterministic fingerprint ids={mismatched[:8]} — "
+            f"deterministic fingerprint ids={mismatched[:8]} - "
             "frames must be byte-identical / cacheable (no model rewrite)",
             source_count=len(compiled),
         )
@@ -445,10 +446,7 @@ def gate_activity_memory(
     return GateOutcome(
         ok=True,
         verdict="PASS",
-        reason=(
-            f"ACTIVITY-FRAMES ok: frames={len(compiled)} "
-            f"evidence_ok mode=compiled"
-        ),
+        reason=(f"ACTIVITY-FRAMES ok: frames={len(compiled)} evidence_ok mode=compiled"),
         exit_code=0,
         source_count=len(compiled),
         human_required=False,

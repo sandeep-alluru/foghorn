@@ -1,4 +1,4 @@
-"""Staleness recommendations — actionable advice for stale decisions."""
+"""Staleness recommendations - actionable advice for stale decisions."""
 
 from __future__ import annotations
 
@@ -86,17 +86,17 @@ def recommend(repo: WorldRepo) -> list[Recommendation]:
         # Determine action
         if total_facts == 0:
             action = "review"
-            reason = "Decision has no fact dependencies — review if still relevant"
+            reason = "Decision has no fact dependencies - review if still relevant"
         elif total_facts > 0 and n_stale >= total_facts:
             action = "archive"
             reason = (
-                f"All {total_facts} fact(s) this decision depended on have changed — "
+                f"All {total_facts} fact(s) this decision depended on have changed - "
                 "the decision is no longer grounded in current world state."
             )
         elif total_facts > 0 and n_stale / total_facts > 0.5:
             action = "re-evaluate"
             reason = (
-                f"{n_stale} of {total_facts} upstream fact(s) have changed — "
+                f"{n_stale} of {total_facts} upstream fact(s) have changed - "
                 "a majority of the evidence base is outdated."
             )
         else:

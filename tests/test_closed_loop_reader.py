@@ -1,4 +1,4 @@
-"""Closed-loop reader — empty worlds and D-FOGHORN misuse fail loudly."""
+"""Closed-loop reader - empty worlds and D-FOGHORN misuse fail loudly."""
 
 from __future__ import annotations
 

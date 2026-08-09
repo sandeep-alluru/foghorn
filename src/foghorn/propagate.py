@@ -1,4 +1,4 @@
-"""Impact propagation — find all transitively stale decisions when facts change."""
+"""Impact propagation - find all transitively stale decisions when facts change."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ class PropagationResult:
         changed_fact_ids: The fact IDs that triggered the propagation.
         directly_stale: Labels of decisions that directly depend on changed facts.
         transitively_stale: Labels of decisions that depend on directly stale decisions
-            (requires decisions to reference other decisions via their fact_ids — if the
+            (requires decisions to reference other decisions via their fact_ids - if the
             architecture only records fact→decision edges, this will be empty).
         propagation_depth: Maximum depth reached in the propagation graph.
         impact_summary: Human-readable summary of the propagation result.
@@ -47,7 +47,7 @@ def propagate_staleness(repo: WorldRepo, changed_fact_ids: list[str]) -> Propaga
     if not changed_fact_ids:
         return PropagationResult(
             changed_fact_ids=[],
-            impact_summary="No facts changed — nothing is stale.",
+            impact_summary="No facts changed - nothing is stale.",
         )
 
     store = repo.store

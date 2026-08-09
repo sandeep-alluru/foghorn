@@ -1,4 +1,4 @@
-"""Tests for foghorn.export — export_json, import_json, export_graphviz."""
+"""Tests for foghorn.export - export_json, import_json, export_graphviz."""
 
 from __future__ import annotations
 

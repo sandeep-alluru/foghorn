@@ -1,4 +1,4 @@
-"""Staleness propagation engine — find decisions invalidated by fact changes."""
+"""Staleness propagation engine - find decisions invalidated by fact changes."""
 
 from __future__ import annotations
 

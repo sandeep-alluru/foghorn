@@ -1,8 +1,8 @@
-"""ACTIVITY-FRAMES — deterministic screen-activity memory (arXiv 2608.05784).
+"""ACTIVITY-FRAMES - deterministic screen-activity memory (arXiv 2608.05784).
 
 Track B public research maps Activity Frames → foghorn deep-dive.
 Failure: agents re-derive routines from LLM summaries / raw capture instead of
-compiled frames with evidence pointers (paper: summaries 66–80% vs frames ~98%).
+compiled frames with evidence pointers (paper: summaries 66-80% vs frames ~98%).
 """
 
 from __future__ import annotations
@@ -132,7 +132,7 @@ def test_missing_evidence_fails_loud() -> None:
         input_volume=0,
         evidence_ptrs=(),  # no evidence
     )
-    # fingerprint mismatch + missing evidence — evidence checked first path
+    # fingerprint mismatch + missing evidence - evidence checked first path
     out = gate_activity_memory([bad], memory_mode="compiled")
     assert out.ok is False
     assert out.verdict == "FAIL_LOUD"
@@ -275,7 +275,7 @@ def test_arxiv_activity_frames_fixture() -> None:
     assert accept.verdict == "PASS"
     # All frames mechanically auditable
     assert all(frame_is_valid(f) for f in frames)
-    # Prompt-ready block is just the frame dicts (86x smaller idea — structural)
+    # Prompt-ready block is just the frame dicts (86x smaller idea - structural)
     block = [f.to_dict() for f in frames]
     assert all("evidence_ptrs" in b and b["evidence_ptrs"] for b in block)
 

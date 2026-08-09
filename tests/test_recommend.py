@@ -1,4 +1,4 @@
-"""Tests for foghorn.recommend — Recommendation and recommend()."""
+"""Tests for foghorn.recommend - Recommendation and recommend()."""
 
 from __future__ import annotations
 

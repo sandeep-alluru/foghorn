@@ -22,7 +22,6 @@ from dataclasses import dataclass
 
 from foghorn.repo import WorldRepo
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -102,7 +101,7 @@ def _run(tmp: str) -> None:
     print("  Every monitoring cycle it commits current facts to foghorn.")
     print("  When metrics change, foghorn identifies stale routing decisions.")
     print()
-    print(f"  Alert thresholds:")
+    print("  Alert thresholds:")
     print(f"    Latency:      > {LATENCY_ALERT_MS}ms  →  routing decisions stale")
     print(f"    Redis memory: > {MEMORY_ALERT_PCT}%   →  cache decisions stale")
     print()
@@ -143,7 +142,7 @@ def _run(tmp: str) -> None:
 
     print(f"  [FACT]  us-east-1 latency:    {sample_0.us_east_1_latency_ms}ms (healthy)")
     print(f"  [FACT]  ap-southeast-1:        {sample_0.ap_southeast_1_latency_ms}ms (healthy)")
-    print(f"  [FACT]  api-gateway:            healthy")
+    print("  [FACT]  api-gateway:            healthy")
     print(f"  [FACT]  redis-cluster memory:  {sample_0.redis_memory_pct}% (normal)")
 
     # -----------------------------------------------------------------------
@@ -192,7 +191,6 @@ def _run(tmp: str) -> None:
     # Track which fact IDs are currently active for each metric
     # so we can retract them when values change
     current_latency_east_id = f_latency_east.id
-    current_latency_ap_id   = f_latency_ap.id
     current_redis_mem_id    = f_redis_mem.id
 
     alert_raised = False
@@ -205,13 +203,12 @@ def _run(tmp: str) -> None:
               f"ap-southeast-1: {sample.ap_southeast_1_latency_ms}ms  |  "
               f"redis: {sample.redis_memory_pct}%")
 
-        changed = False
 
         # Check if us-east-1 latency changed significantly (>20ms delta)
-        old_latency = int(current_latency_east_id[:2] if False else "0")  # dummy
+        int(current_latency_east_id[:2] if False else "0")  # dummy
         # We detect change by comparing the new status string to what we'd commit
-        new_latency_status = latency_status("us-east-1", sample.us_east_1_latency_ms)
-        new_redis_status = redis_status(sample.redis_memory_pct)
+        latency_status("us-east-1", sample.us_east_1_latency_ms)
+        redis_status(sample.redis_memory_pct)
 
         # For simplicity, commit updated facts every cycle (like a real monitor would)
         # Retract old facts and add new ones

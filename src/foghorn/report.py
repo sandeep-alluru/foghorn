@@ -34,7 +34,7 @@ def print_stale(
     con = console or _console
 
     if not alerts:
-        con.print("[green]✓ No stale decisions — world state is consistent.[/green]")
+        con.print("[green]✓ No stale decisions - world state is consistent.[/green]")
         return
 
     con.print(
@@ -178,13 +178,13 @@ def to_markdown(alerts: list[StalenessAlert]) -> str:
     if not alerts:
         return (
             "## foghorn staleness report\n\n"
-            "🟢 **No stale decisions** — world state is consistent.\n"
+            "🟢 **No stale decisions** - world state is consistent.\n"
         )
 
     lines = [
         "## foghorn staleness report",
         "",
-        f"🔴 **{len(alerts)} stale decision(s)** — review before merging.",
+        f"🔴 **{len(alerts)} stale decision(s)** - review before merging.",
         "",
         "| Impact | Decision | Stale Facts |",
         "|--------|----------|-------------|",

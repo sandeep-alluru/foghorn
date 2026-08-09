@@ -13,7 +13,6 @@ Exit 0 = all passed. Exit 1 = at least one failure.
 
 from __future__ import annotations
 
-import importlib
 import json
 import subprocess
 import sys
@@ -53,7 +52,7 @@ def section(title: str) -> None:
     print(f"\n{BOLD}{title}{RESET}")
 
 
-def run(name: str, fn):  # noqa: ANN001
+def run(name: str, fn):
     try:
         fn()
         ok(name)
@@ -72,7 +71,7 @@ def _test_import_version():
     assert foghorn.__version__ != "0.0.0"
 
 def _test_import_public_api():
-    from foghorn import Fact, Decision, StalenessAlert, WorldRepo, WorldCommit
+    from foghorn import WorldRepo
     assert callable(WorldRepo.init)
 
 run("foghorn package imports", _test_import_version)
@@ -112,15 +111,14 @@ def _test_decision_serialization():
 
 def _test_worldrepo_commit_round_trip():
     from foghorn import WorldRepo
-    with tempfile.TemporaryDirectory() as tmp:
-        with WorldRepo.init(f"{tmp}/world.db") as repo:
-            repo.add_fact("Redis", "is-appropriate-for", "rate-limiting")
-            wc = repo.commit("Initial facts")
-            assert wc.id
-            assert len(wc.fact_ids) == 1
-            commits = repo.log()
-            assert len(commits) == 1
-            assert commits[0].message == "Initial facts"
+    with tempfile.TemporaryDirectory() as tmp, WorldRepo.init(f"{tmp}/world.db") as repo:
+        repo.add_fact("Redis", "is-appropriate-for", "rate-limiting")
+        wc = repo.commit("Initial facts")
+        assert wc.id
+        assert len(wc.fact_ids) == 1
+        commits = repo.log()
+        assert len(commits) == 1
+        assert commits[0].message == "Initial facts"
 
 run("Fact.id is content-addressed (same triple = same ID)", _test_fact_content_addressed)
 run("Fact.to_dict() / from_dict() round-trip", _test_fact_serialization)
@@ -134,47 +132,44 @@ section("3. Staleness propagation")
 
 def _test_stale_detects_changed_fact():
     from foghorn import WorldRepo
-    with tempfile.TemporaryDirectory() as tmp:
-        with WorldRepo.init(f"{tmp}/world.db") as repo:
-            f = repo.add_fact("Redis", "is-appropriate-for", "rate-limiting")
-            repo.decide("chose-redis", "Redis fits our needs", depends_on=[f.id])
-            repo.commit("v1")
-            repo.retract_fact(f.id)
-            repo.add_fact("Valkey", "replaced", "Redis")
-            repo.commit("v2")
-            alerts = repo.stale()
-            assert len(alerts) > 0, "Should detect stale decision after fact changes"
-            assert alerts[0].decision_label == "chose-redis"
+    with tempfile.TemporaryDirectory() as tmp, WorldRepo.init(f"{tmp}/world.db") as repo:
+        f = repo.add_fact("Redis", "is-appropriate-for", "rate-limiting")
+        repo.decide("chose-redis", "Redis fits our needs", depends_on=[f.id])
+        repo.commit("v1")
+        repo.retract_fact(f.id)
+        repo.add_fact("Valkey", "replaced", "Redis")
+        repo.commit("v2")
+        alerts = repo.stale()
+        assert len(alerts) > 0, "Should detect stale decision after fact changes"
+        assert alerts[0].decision_label == "chose-redis"
 
 def _test_no_stale_identical_facts():
     from foghorn import WorldRepo
-    with tempfile.TemporaryDirectory() as tmp:
-        with WorldRepo.init(f"{tmp}/world.db") as repo:
-            f = repo.add_fact("Redis", "is", "fast")
-            repo.decide("chose-redis", "Redis is fast", depends_on=[f.id])
-            repo.commit("v1")
-            repo.add_fact("Redis", "is", "fast")  # same fact — idempotent
-            # Nothing new staged after the idempotent add (same ID already exists)
-            try:
-                repo.commit("v2")
-            except ValueError:
-                pass  # nothing staged is fine
-            alerts = repo.stale()
-            assert len(alerts) == 0, "Identical facts should not cause staleness"
+    with tempfile.TemporaryDirectory() as tmp, WorldRepo.init(f"{tmp}/world.db") as repo:
+        f = repo.add_fact("Redis", "is", "fast")
+        repo.decide("chose-redis", "Redis is fast", depends_on=[f.id])
+        repo.commit("v1")
+        repo.add_fact("Redis", "is", "fast")  # same fact — idempotent
+        # Nothing new staged after the idempotent add (same ID already exists)
+        try:
+            repo.commit("v2")
+        except ValueError:
+            pass  # nothing staged is fine
+        alerts = repo.stale()
+        assert len(alerts) == 0, "Identical facts should not cause staleness"
 
 def _test_staleness_alert_fields():
     from foghorn import WorldRepo
-    with tempfile.TemporaryDirectory() as tmp:
-        with WorldRepo.init(f"{tmp}/world.db") as repo:
-            f = repo.add_fact("Redis", "is", "fast", confidence=0.9)
-            repo.decide("chose-redis", "Redis is fast", depends_on=[f.id])
-            repo.commit("v1")
-            repo.retract_fact(f.id)
-            repo.add_fact("Valkey", "replaced", "Redis")
-            repo.commit("v2")
-            alerts = repo.stale()
-            assert alerts[0].impact_score > 0
-            assert len(alerts[0].stale_fact_ids) > 0
+    with tempfile.TemporaryDirectory() as tmp, WorldRepo.init(f"{tmp}/world.db") as repo:
+        f = repo.add_fact("Redis", "is", "fast", confidence=0.9)
+        repo.decide("chose-redis", "Redis is fast", depends_on=[f.id])
+        repo.commit("v1")
+        repo.retract_fact(f.id)
+        repo.add_fact("Valkey", "replaced", "Redis")
+        repo.commit("v2")
+        alerts = repo.stale()
+        assert alerts[0].impact_score > 0
+        assert len(alerts[0].stale_fact_ids) > 0
 
 run("stale() detects decision invalidated by fact change", _test_stale_detects_changed_fact)
 run("stale() returns empty when facts unchanged", _test_no_stale_identical_facts)
@@ -188,15 +183,14 @@ section("4. Report formatters")
 def _test_to_json_with_alerts():
     from foghorn import WorldRepo
     from foghorn.report import to_json
-    with tempfile.TemporaryDirectory() as tmp:
-        with WorldRepo.init(f"{tmp}/world.db") as repo:
-            f = repo.add_fact("Redis", "is", "fast")
-            repo.decide("chose-redis", "Redis is fast", depends_on=[f.id])
-            repo.commit("v1")
-            repo.retract_fact(f.id)
-            repo.add_fact("Valkey", "replaced", "Redis")
-            repo.commit("v2")
-            alerts = repo.stale()
+    with tempfile.TemporaryDirectory() as tmp, WorldRepo.init(f"{tmp}/world.db") as repo:
+        f = repo.add_fact("Redis", "is", "fast")
+        repo.decide("chose-redis", "Redis is fast", depends_on=[f.id])
+        repo.commit("v1")
+        repo.retract_fact(f.id)
+        repo.add_fact("Valkey", "replaced", "Redis")
+        repo.commit("v2")
+        alerts = repo.stale()
     parsed = json.loads(to_json(alerts))
     assert parsed["has_stale"] is True
     assert parsed["stale_count"] >= 1
@@ -213,7 +207,9 @@ def _test_to_markdown():
 
 def _test_print_stale():
     import io
+
     from rich.console import Console
+
     from foghorn.fact import StalenessAlert
     from foghorn.report import print_stale
     buf = io.StringIO()
@@ -260,6 +256,7 @@ def _test_api_import():
 
 def _test_api_health():
     from fastapi.testclient import TestClient
+
     from foghorn.api import app
     client = TestClient(app)
     r = client.get("/health")
@@ -269,6 +266,7 @@ def _test_api_health():
 
 def _test_api_fact_and_stale():
     from fastapi.testclient import TestClient
+
     from foghorn.api import app
     client = TestClient(app)
     with tempfile.TemporaryDirectory() as tmp:
@@ -354,7 +352,7 @@ run("CODEX.md exists and non-empty", lambda: _check_file_nonempty("CODEX.md"))
 run(".github/copilot-instructions.md exists", lambda: _check_file_nonempty(".github/copilot-instructions.md"))
 def _test_cursor_rules():
     mdc_files = list((REPO_ROOT / ".cursor/rules").glob("*.mdc"))
-    assert len(mdc_files) >= 1, f"Expected ≥1 .mdc file in .cursor/rules/, found none"
+    assert len(mdc_files) >= 1, "Expected ≥1 .mdc file in .cursor/rules/, found none"
 
 run(".cursor/rules/ has at least one .mdc file", _test_cursor_rules)
 run(".windsurfrules exists", lambda: _check_file_nonempty(".windsurfrules"))

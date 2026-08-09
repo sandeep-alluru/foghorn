@@ -1,4 +1,4 @@
-"""STALE-WIKI / Amazon Q — wall-clock source age gate.
+"""STALE-WIKI / Amazon Q - wall-clock source age gate.
 
 Matrix public corpus was **partial** (gate_staleness exists but no Amazon Q
 incident fixture). Track B 20260807T121230Z also maps AgentExecutor / foghorn.
@@ -100,7 +100,7 @@ def test_latest_only_ignores_old_history_row() -> None:
         "v1",
         recorded_at=now - 30 * 86400,
     )
-    # Same subject/predicate — content-addressed id differs by object
+    # Same subject/predicate - content-addressed id differs by object
     # Wait - Fact id is subject|predicate|object so different objects are different facts.
     # For latest by (subject, predicate) we keep newest recorded_at among them.
     new = Fact(
@@ -116,7 +116,7 @@ def test_latest_only_ignores_old_history_row() -> None:
         use_latest_only=True,
     )
     # use_latest_only keeps both keys... wait (subject, predicate) is same for both
-    # so only newest wins. Good — should PASS.
+    # so only newest wins. Good - should PASS.
     assert out.ok is True
     assert out.source_count == 1
 
@@ -139,7 +139,7 @@ def test_repo_path(tmp_path: Path) -> None:
     repo = WorldRepo.init(str(tmp_path / "w.db"))
     try:
         now = time.time()
-        # add_fact uses current time — force via store
+        # add_fact uses current time - force via store
         f = Fact(
             "kb",
             "knowledge_base",

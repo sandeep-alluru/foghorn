@@ -235,7 +235,7 @@ def recommend(ctx: click.Context) -> None:
         recs = _recommend(repo)
 
     if not recs:
-        click.echo("No stale decisions — everything looks fresh!")
+        click.echo("No stale decisions - everything looks fresh!")
         return
 
     console = Console()

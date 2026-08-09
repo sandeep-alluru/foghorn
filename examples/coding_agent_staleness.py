@@ -24,7 +24,6 @@ from datetime import datetime
 
 from foghorn.repo import WorldRepo
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -189,10 +188,10 @@ def _run(tmp: str) -> None:
         "EOL as of 2025-04-30 — upgrade to Node.js 22 LTS immediately",
         confidence=1.0,
     )
-    print(f"  [ADVISORY-1] Node.js 18 reached End of Life.")
+    print("  [ADVISORY-1] Node.js 18 reached End of Life.")
     print(f"               Old fact ID: {f_node.id[:8]}  (retracted)")
     print(f"               New fact ID: {f_node_eol.id[:8]}  (staged)")
-    print(f"               Recommended: upgrade to Node.js 22 LTS.")
+    print("               Recommended: upgrade to Node.js 22 LTS.")
     print()
 
     # Advisory 2: Redis BSL license change.
@@ -203,10 +202,10 @@ def _run(tmp: str) -> None:
         "BSL 1.1 — commercial SaaS use requires paid license (evaluate Valkey/KeyDB)",
         confidence=0.95,
     )
-    print(f"  [ADVISORY-2] Redis 7 license changed to Business Source License (BSL).")
+    print("  [ADVISORY-2] Redis 7 license changed to Business Source License (BSL).")
     print(f"               Old fact ID: {f_redis.id[:8]}  (retracted)")
     print(f"               New fact ID: {f_redis_bsl.id[:8]}  (staged)")
-    print(f"               Alternatives: Valkey (Linux Foundation), KeyDB (Snap).")
+    print("               Alternatives: Valkey (Linux Foundation), KeyDB (Snap).")
     print()
 
     c2 = repo.commit("Security advisory updates — 2026-Q2")

@@ -16,10 +16,12 @@ When NOT to use:
 
 from __future__ import annotations
 
+import contextlib
 import time
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, Literal, Sequence
+from typing import Any, Literal
 
 from foghorn.fact import Fact, StalenessAlert
 from foghorn.repo import WorldRepo
@@ -149,7 +151,7 @@ def _open_repo(source: WorldRepo | str | Path) -> tuple[WorldRepo, bool]:
         return source, False
     path = Path(source)
     if not path.exists() and path.suffix not in {".db", ""}:
-        # allow creating? no — missing path fails loud
+        # allow creating? no - missing path fails loud
         raise ClosedLoopError(f"world db path not found: {path}")
     # WorldRepo.init creates parent dirs; for gate we require existing file when path given
     if path.suffix == ".db" and not path.is_file():
@@ -169,22 +171,22 @@ def gate_staleness(
     Args:
         source: Open :class:`WorldRepo` or path to a world SQLite db.
         mode: Must be ``\"staleness\"``. ``\"current_state\"`` is always FAIL_LOUD
-            (D-FOGHORN — foghorn is not a LWW episode store).
+            (D-FOGHORN - foghorn is not a LWW episode store).
         impact_threshold: Max alert impact allowed for PASS (any alert at/above
             this impact → FAIL exit 1).
         require_decisions: If True, a world with zero decisions is FAIL_LOUD
             (nothing load-bearing to gate).
 
     Returns:
-        :class:`GateOutcome` — callers should ``sys.exit(outcome.exit_code)``.
+        :class:`GateOutcome` - callers should ``sys.exit(outcome.exit_code)``.
     """
     if mode == "current_state":
         return _fail_loud(
-            "D-FOGHORN: mode=current_state forbidden — foghorn is fact→decision "
+            "D-FOGHORN: mode=current_state forbidden - foghorn is fact→decision "
             "staleness only, never LWW episode/current-state store"
         )
     if mode != "staleness":
-        return _fail_loud(f"unknown mode={mode!r} — only mode='staleness' is valid")
+        return _fail_loud(f"unknown mode={mode!r} - only mode='staleness' is valid")
 
     owns = False
     repo: WorldRepo | None = None
@@ -193,27 +195,29 @@ def gate_staleness(
             repo, owns = _open_repo(source)
         except ClosedLoopError as exc:
             return _fail_loud(str(exc))
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return _fail_loud(f"open world failed: {exc.__class__.__name__}: {exc}")
 
         facts = list(repo.store.list_facts())
-        decisions = list(repo.store.list_decisions()) if hasattr(repo.store, "list_decisions") else []
-        # Fallback: decisions may only live in commits — try common APIs
+        decisions = (
+            list(repo.store.list_decisions()) if hasattr(repo.store, "list_decisions") else []
+        )
+        # Fallback: decisions may only live in commits - try common APIs
         if not decisions and hasattr(repo.store, "all_decisions"):
             decisions = list(repo.store.all_decisions())  # type: ignore[attr-defined]
 
         if require_decisions and len(decisions) == 0:
             return _fail_loud(
-                "empty decisions — no load-bearing fact→decision edges to gate "
+                "empty decisions - no load-bearing fact→decision edges to gate "
                 "(write-only fact log is ornament)"
             )
 
         if len(facts) == 0 and len(decisions) == 0:
-            return _fail_loud("empty world — nothing to gate")
+            return _fail_loud("empty world - nothing to gate")
 
         try:
             alerts = tuple(repo.stale())
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return _fail_loud(f"stale() failed: {exc.__class__.__name__}: {exc}")
 
         max_impact = max((a.impact_score for a in alerts), default=0.0)
@@ -245,10 +249,8 @@ def gate_staleness(
         )
     finally:
         if owns and repo is not None:
-            try:
+            with contextlib.suppress(Exception):
                 repo.close()
-            except Exception:  # noqa: BLE001
-                pass
 
 
 def assert_fresh(
@@ -276,10 +278,7 @@ def is_source_predicate(
         banned |= {str(x).strip().lower().replace("-", "_") for x in extra}
     if p in banned:
         return True
-    for b in banned:
-        if p.startswith(b + "_") or p.endswith("_" + b):
-            return True
-    return False
+    return any(p.startswith(b + "_") or p.endswith("_" + b) for b in banned)
 
 
 def _facts_from_source(
@@ -291,7 +290,7 @@ def _facts_from_source(
 
 
 def _latest_by_subject_predicate(facts: Sequence[Fact]) -> list[Fact]:
-    """Keep only the newest recorded_at per (subject, predicate) — D-FOGHORN."""
+    """Keep only the newest recorded_at per (subject, predicate) - D-FOGHORN."""
     best: dict[tuple[str, str], Fact] = {}
     for f in facts:
         key = (f.subject, f.predicate)
@@ -313,7 +312,7 @@ def gate_source_freshness(
 ) -> GateOutcome:
     """Refuse decisions grounded on expired wiki/docs (Amazon Q stale-wiki class).
 
-    Public incident: Amazon Q / stale internal wiki — agents answer from
+    Public incident: Amazon Q / stale internal wiki - agents answer from
     retrieved documentation that is no longer current. ``gate_staleness`` only
     fires when fact *ids* change under a decision; it does **not** fail on
     wall-clock age of an unchanging wiki page fact.
@@ -322,9 +321,9 @@ def gate_source_freshness(
 
     * No source facts when ``require_source_facts`` → **FAIL_LOUD**
     * Any source fact with age > ``max_age_seconds`` → **FAIL**
-      (``human_required`` — re-retrieve or human review)
+      (``human_required`` - re-retrieve or human review)
     * Fresh sources only → **PASS**
-    * ``use_latest_only`` (default): apply D-FOGHORN — age the newest fact per
+    * ``use_latest_only`` (default): apply D-FOGHORN - age the newest fact per
       (subject, predicate), not the oldest log row.
 
     Args:
@@ -345,9 +344,7 @@ def gate_source_freshness(
     t_now = float(now if now is not None else time.time())
     all_facts = _facts_from_source(source)
     extra_preds = predicates
-    subject_filter = (
-        {str(s).strip() for s in subjects if str(s).strip()} if subjects else None
-    )
+    subject_filter = {str(s).strip() for s in subjects if str(s).strip()} if subjects else None
 
     source_facts = [
         f
@@ -362,7 +359,7 @@ def gate_source_freshness(
     if require_source_facts and len(source_facts) == 0:
         return _fail_loud(
             "STALE-WIKI/Amazon-Q: no wiki/doc source facts to gate "
-            f"(predicates={sorted(DEFAULT_SOURCE_PREDICATES)[:6]}…) — "
+            f"(predicates={sorted(DEFAULT_SOURCE_PREDICATES)[:6]}…) - "
             "cannot ground answers without a retrievable source inventory",
             human_required=True,
             source_count=0,
@@ -391,7 +388,7 @@ def gate_source_freshness(
         return _fail(
             f"STALE-WIKI/Amazon-Q: {len(stale_ids)} source fact(s) older than "
             f"max_age={max_age_seconds:.0f}s (oldest_age={oldest_age:.0f}s) "
-            f"ids={stale_ids[:8]} — refuse answer grounded on expired wiki/docs; "
+            f"ids={stale_ids[:8]} - refuse answer grounded on expired wiki/docs; "
             f"re-retrieve before decision",
             human_required=True,
             source_count=len(source_facts),

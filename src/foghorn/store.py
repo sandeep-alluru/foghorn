@@ -166,7 +166,7 @@ class WorldStore:
 
         **D-FOGHORN warning:** this is an append-oriented history view.
         Do **not** use ``next(iter(list_facts()))`` or ``list_facts()[0]`` as
-        the "current" value of a subject/predicate — that is the *oldest*
+        the "current" value of a subject/predicate - that is the *oldest*
         fact and caused full pipeline recaptures in production (Pioneer
         Content Foundry, 2026-07-22). Use :meth:`latest_fact` or
         :meth:`list_facts_for` instead.
@@ -205,8 +205,7 @@ class WorldStore:
         changing the object creates a new row; "current" = max(recorded_at).
         """
         row = self._conn.execute(
-            "SELECT * FROM facts WHERE subject=? AND predicate=? "
-            "ORDER BY recorded_at DESC LIMIT 1",
+            "SELECT * FROM facts WHERE subject=? AND predicate=? ORDER BY recorded_at DESC LIMIT 1",
             (subject, predicate),
         ).fetchone()
         if row is None:
@@ -269,10 +268,10 @@ class WorldStore:
         # Batch fetch all fact IDs for these decisions in one query
         decision_ids = [r["id"] for r in rows]
         placeholders = ",".join("?" * len(decision_ids))
-        # Placeholders are built from "?" * N — no injection risk
+        # Placeholders are built from "?" * N - no injection risk
         df_sql = (
             "SELECT decision_id, fact_id FROM decision_facts "
-            f"WHERE decision_id IN ({placeholders})"  # nosec B608 — placeholders are "?" only
+            f"WHERE decision_id IN ({placeholders})"  # nosec B608 - placeholders are "?" only
         )
         fact_rows = self._conn.execute(df_sql, decision_ids).fetchall()
 
@@ -308,7 +307,7 @@ class WorldStore:
             return []
 
         # Batch fetch all fact IDs for these decisions in one query
-        # Placeholders are built from "?" * N — no injection risk
+        # Placeholders are built from "?" * N - no injection risk
         df2_sql = (
             "SELECT decision_id, fact_id FROM decision_facts "
             f"WHERE decision_id IN ({placeholders})"  # nosec B608
