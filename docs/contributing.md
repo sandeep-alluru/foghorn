@@ -1,6 +1,6 @@
 # Contributing
 
-For the full contribution guide see [CONTRIBUTING.md](../CONTRIBUTING.md) in the repo root.
+For the full contribution guide see [CONTRIBUTING.md](https://github.com/sandeep-alluru/foghorn/blob/main/CONTRIBUTING.md) in the repo root.
 
 ## Quick links
 
