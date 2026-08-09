@@ -204,7 +204,7 @@ def gate_staleness(
         )
         # Fallback: decisions may only live in commits - try common APIs
         if not decisions and hasattr(repo.store, "all_decisions"):
-            decisions = list(repo.store.all_decisions())  # type: ignore[attr-defined]
+            decisions = list(repo.store.all_decisions())
 
         if require_decisions and len(decisions) == 0:
             return _fail_loud(

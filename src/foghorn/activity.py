@@ -148,7 +148,7 @@ def _row_from_mapping(item: RawCaptureRow | dict[str, Any]) -> RawCaptureRow:
         application=app,
         site=site,
         input_kind=kind,
-        meta=dict(meta),
+        meta=dict(meta or {}),
     )
 
 
@@ -248,9 +248,9 @@ def _frame_from_mapping(item: ActivityFrame | dict[str, Any]) -> ActivityFrame:
     ptrs = tuple(str(p) for p in ptrs_raw)
     app = _canon_app(str(item.get("application") or item.get("app") or ""))
     site = _canon_site(str(item.get("site") or ""))
-    t_start = float(item.get("t_start", item.get("start", 0.0)))
-    t_end = float(item.get("t_end", item.get("end", t_start)))
-    volume = int(item.get("input_volume", item.get("volume", 0)))
+    t_start = float(item.get("t_start") or item.get("start") or 0.0)
+    t_end = float(item.get("t_end") or item.get("end") or t_start)
+    volume = int(item.get("input_volume") or item.get("volume") or 0)
     fid = str(item.get("frame_id") or "").strip()
     if not fid:
         fid = activity_frame_fingerprint(
