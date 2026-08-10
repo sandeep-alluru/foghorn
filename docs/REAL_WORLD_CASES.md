@@ -105,9 +105,52 @@ Age gate is not optional if the agent cites docs.
 about a session day or replaying a routine from screen memory. Pair with
 `gate_staleness` / `gate_source_freshness` for fact→decision edges and wiki age.
 
+---
+
+## Case EVIDENCE-LINK — unprovenanced feature engineering (arXiv 2608.06366)
+
+**Source:** Track B public research (`20260810T001224Z` / prior sessions) —
+[Tracing the Heart: An Evidence-Linked Pipeline for Heart-Failure Feature
+Engineering](https://arxiv.org/abs/2608.06366v1).
+
+**What fails:**
+
+1. Multi-agent feature pipelines emit derived/aggregated clinical (or general)
+   features without provenance back to source tables, raw rows, or guidelines.
+2. Agents claim **decision-grade** readiness with zero evidence links.
+3. Rubric/structure failures still ship as green features.
+4. `gate_source_freshness` ages wiki facts; `gate_activity_memory` requires
+   activity `evidence_ptrs` — neither gates **engineered feature provenance**.
+
+**Product in this repo:**
+
+| Control | API |
+|---------|-----|
+| Feature / link types | `FeatureRecord`, `EvidenceLink` |
+| Kind helpers | `is_feature_kind`, `is_evidence_kind` |
+| Analyzer | `analyze_evidence_links` |
+| Provenance gate | `gate_evidence_links(..., claim_decision_grade=…)` |
+| Raise form | `assert_evidence_linked(...)` |
+
+**Rules (load-bearing):**
+
+- claim decision-grade + zero features → **FAIL_LOUD**
+- claim decision-grade + features with zero links → **FAIL_LOUD**
+- feature below `min_links_per_feature` → **FAIL**
+- empty / unknown `source_id` (when inventory given) → **FAIL**
+- `rubric_ok=False` → **FAIL**
+- fully linked, rubric-ok features → **PASS**
+
+**Tests:** `tests/test_evidence_link.py` — Tracing the Heart fixture class.
+
+**Non-Ornament:** Call `gate_evidence_links` **before** using engineered
+features in decisions. Pair with `gate_source_freshness` for wiki age and
+`gate_activity_memory` for screen evidence pointers.
+
 ## Related farm lessons
 - Writer fixed without tracing readers (cache key bugs)
 - Silent success / vacuous guards
 - MCP write-only tools are ornaments
 - Amazon Q stale wiki — wall-clock source age (this section)
 - Activity Frames — compile + refuse LLM-summary memory (this section)
+- Evidence-linked features — refuse unprovenanced engineering (this section)

@@ -26,6 +26,17 @@ from foghorn.closed_loop import (
     gate_staleness,
     is_source_predicate,
 )
+from foghorn.evidence import (
+    DEFAULT_EVIDENCE_KINDS,
+    DEFAULT_FEATURE_KINDS,
+    EvidenceLink,
+    FeatureRecord,
+    analyze_evidence_links,
+    assert_evidence_linked,
+    gate_evidence_links,
+    is_evidence_kind,
+    is_feature_kind,
+)
 from foghorn.export import export_graphviz, export_json, import_json
 from foghorn.fact import Decision, Fact, StalenessAlert
 from foghorn.propagate import PropagationResult, propagate_staleness
@@ -37,6 +48,8 @@ from foghorn.store import WorldCommit, WorldStore
 __version__ = _version("foghorn-ai")
 
 __all__ = [
+    "DEFAULT_EVIDENCE_KINDS",
+    "DEFAULT_FEATURE_KINDS",
     "DEFAULT_GAP_SPLIT_SECONDS",
     "DEFAULT_MAX_SOURCE_AGE_SECONDS",
     "DEFAULT_SOURCE_PREDICATES",
@@ -44,7 +57,9 @@ __all__ = [
     "ClosedLoopError",
     "Decision",
     "DiffResult",
+    "EvidenceLink",
     "Fact",
+    "FeatureRecord",
     "GateOutcome",
     "PropagationResult",
     "RawCaptureRow",
@@ -54,7 +69,9 @@ __all__ = [
     "WorldRepo",
     "WorldStore",
     "activity_frame_fingerprint",
+    "analyze_evidence_links",
     "assert_activity_memory_ok",
+    "assert_evidence_linked",
     "assert_fresh",
     "assert_not_current_state_store",
     "assert_sources_fresh",
@@ -65,9 +82,12 @@ __all__ = [
     "export_json",
     "frame_is_valid",
     "gate_activity_memory",
+    "gate_evidence_links",
     "gate_source_freshness",
     "gate_staleness",
     "import_json",
+    "is_evidence_kind",
+    "is_feature_kind",
     "is_source_predicate",
     "propagate_staleness",
     "recommend",
