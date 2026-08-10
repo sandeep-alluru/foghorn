@@ -150,12 +150,7 @@ def _as_feature(item: Any) -> FeatureRecord:
     if isinstance(item, FeatureRecord):
         return item
     if isinstance(item, dict):
-        fid = str(
-            item.get("feature_id")
-            or item.get("id")
-            or item.get("name")
-            or ""
-        ).strip()
+        fid = str(item.get("feature_id") or item.get("id") or item.get("name") or "").strip()
         if not fid:
             raise ValueError("feature missing feature_id/id/name")
         rubric = item.get("rubric_ok", item.get("rubric_pass", True))
@@ -255,9 +250,7 @@ def analyze_evidence_links(
         "broken_source_ptrs": broken,
         "empty_source_ptrs": empty_source,
         "rubric_fail_ids": rubric_fail,
-        "links_by_feature": {
-            fid: [lk.to_dict() for lk in lks] for fid, lks in by_feature.items()
-        },
+        "links_by_feature": {fid: [lk.to_dict() for lk in lks] for fid, lks in by_feature.items()},
         "fully_linked": (
             len(feats) > 0
             and len(unlinked) == 0
@@ -381,8 +374,7 @@ def gate_evidence_links(
         bad = list(unlinked) + [u for u in under if u not in unlinked]
         return _fail(
             f"EVIDENCE-LINK: {len(bad)} feature(s) lack required provenance "
-            f"(min_links={min_links_per_feature}): {bad[:8]}"
-            + ("…" if len(bad) > 8 else ""),
+            f"(min_links={min_links_per_feature}): {bad[:8]}" + ("…" if len(bad) > 8 else ""),
             source_count=n_feat,
             stale_source_ids=tuple(bad),
         )

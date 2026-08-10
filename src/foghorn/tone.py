@@ -214,28 +214,31 @@ def analyze_tone_alignment(
     if req and dominant and req != dominant and req_band != dom_band:
         mis.append("linguistic")
     # cognitive: high formality sources for low formality request (jargon load)
-    if req_band == "low" and dom_band == "high":
-        if "cognitive" not in mis:
-            mis.append("cognitive")
+    if req_band == "low" and dom_band == "high" and "cognitive" not in mis:
+        mis.append("cognitive")
     # relational: peer_support/empathetic request vs clinical/formal sources
-    if req in {"peer_support", "empathetic", "friendly"} and dominant in HIGH_FORMALITY_TONES:
-        if "relational" not in mis:
-            mis.append("relational")
+    if (
+        req in {"peer_support", "empathetic", "friendly"}
+        and dominant in HIGH_FORMALITY_TONES
+        and "relational" not in mis
+    ):
+        mis.append("relational")
 
     # decoupled: response follows dominant source band, not request
     decoupled = False
-    if req and resp:
-        if resp != req and formality_band(resp) != req_band:
-            if dominant and formality_band(resp) == dom_band:
-                decoupled = True
-            elif not dominant:
-                decoupled = True
-        if resp != req and req_band == "low" and resp_band == "high":
-            decoupled = True
-    elif req and dominant and not resp:
+    if (
+        req
+        and resp
+        and resp != req
+        and formality_band(resp) != req_band
+        and ((dominant and formality_band(resp) == dom_band) or not dominant)
+    ):
+        decoupled = True
+    if req and resp and resp != req and req_band == "low" and resp_band == "high":
+        decoupled = True
+    elif req and dominant and not resp and req_band == "low" and dom_band == "high":
         # no response tone but sources already clash hard
-        if req_band == "low" and dom_band == "high":
-            decoupled = True
+        decoupled = True
 
     return ToneReport(
         requested_tone=req,

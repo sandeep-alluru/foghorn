@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import pytest
 
+from foghorn.closed_loop import ClosedLoopError
 from foghorn.evidence import (
     DEFAULT_FEATURE_KINDS,
     EvidenceLink,
@@ -20,7 +21,6 @@ from foghorn.evidence import (
     is_evidence_kind,
     is_feature_kind,
 )
-from foghorn.closed_loop import ClosedLoopError
 
 
 def test_feature_and_evidence_kind_helpers() -> None:
@@ -77,7 +77,7 @@ def test_unlinked_feature_fails() -> None:
 def test_empty_source_id_fails() -> None:
     feats = [FeatureRecord(feature_id="x")]
     # construct via dict then gate should catch empty if we force it
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="source_id must be non-empty"):
         EvidenceLink(feature_id="x", source_id="")
     # via analyze path: _as_link rejects empty
     out = gate_evidence_links(
