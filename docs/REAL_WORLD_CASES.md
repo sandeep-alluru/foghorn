@@ -147,6 +147,47 @@ Engineering](https://arxiv.org/abs/2608.06366v1).
 features in decisions. Pair with `gate_source_freshness` for wiki age and
 `gate_activity_memory` for screen evidence pointers.
 
+---
+
+## Case TA-RAG — tone / contextual decoupling (arXiv 2608.06672)
+
+**Source:** Track B research (`20260810T161237Z`) —
+[TA-RAG: Tone Awareness as a Design Imperative for Retrieval-Augmented
+Generation](https://arxiv.org/abs/2608.06672v1).
+
+**What fails:**
+
+1. Retrieved docs carry formal/academic/clinical style that shapes RAG output
+   **before** user tone instructions are honored.
+2. **Contextual decoupling**: facts correct, recipient tone wrong
+   (linguistic / cognitive / relational misalignment).
+3. Agents claim tone-matched replies while `response_tone` follows sources.
+4. Freshness and evidence gates do not check **register** alignment.
+
+**Product in this repo:**
+
+| Control | API |
+|---------|-----|
+| Doc type | `RetrievedDoc` |
+| Analyzer | `analyze_tone_alignment` → `ToneReport` |
+| Gate | `gate_tone_awareness(...)` |
+| Helpers | `infer_tone_from_text`, `formality_band` |
+| Raise form | `assert_tone_aware` |
+
+**Rules (load-bearing):**
+
+- empty requested tone / phantom claim → **FAIL_LOUD**
+- claimed match but response_tone ≠ request → **FAIL**
+- contextual decoupling (response follows source formality) → **FAIL**
+- misalignment count above budget → **FAIL**
+- aligned request/response → **PASS**
+
+**Tests:** `tests/test_tone_awareness.py`
+
+**Non-Ornament:** Call `gate_tone_awareness` after retrieval, before shipping
+user-facing text that claimed a register. Pair with `gate_source_freshness`
+and `gate_evidence_links`.
+
 ## Related farm lessons
 - Writer fixed without tracing readers (cache key bugs)
 - Silent success / vacuous guards
@@ -154,3 +195,4 @@ features in decisions. Pair with `gate_source_freshness` for wiki age and
 - Amazon Q stale wiki — wall-clock source age (this section)
 - Activity Frames — compile + refuse LLM-summary memory (this section)
 - Evidence-linked features — refuse unprovenanced engineering (this section)
+- TA-RAG — refuse tone-decoupled RAG answers (this section)
