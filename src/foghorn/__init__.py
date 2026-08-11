@@ -45,8 +45,8 @@ from foghorn.repo import WorldRepo
 from foghorn.staleness import DiffResult, compute_staleness, diff_commits
 from foghorn.store import WorldCommit, WorldStore
 from foghorn.sufficiency import (
-    DEFAULT_SUFFICIENCY_DIMENSIONS,
     DEEP_SUFFICIENCY_DIMENSIONS,
+    DEFAULT_SUFFICIENCY_DIMENSIONS,
     EvidenceBundle,
     SufficiencyReport,
     analyze_evidence_sufficiency,
@@ -69,6 +69,7 @@ from foghorn.tone import (
 __version__ = _version("foghorn-ai")
 
 __all__ = [
+    "DEEP_SUFFICIENCY_DIMENSIONS",
     "DEFAULT_EVIDENCE_KINDS",
     "DEFAULT_FEATURE_KINDS",
     "DEFAULT_GAP_SPLIT_SECONDS",
@@ -76,7 +77,6 @@ __all__ = [
     "DEFAULT_SOURCE_PREDICATES",
     "DEFAULT_SUFFICIENCY_DIMENSIONS",
     "DEFAULT_TONES",
-    "DEEP_SUFFICIENCY_DIMENSIONS",
     "HIGH_FORMALITY_TONES",
     "LOW_FORMALITY_TONES",
     "ActivityFrame",
