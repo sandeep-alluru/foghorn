@@ -188,6 +188,46 @@ Generation](https://arxiv.org/abs/2608.06672v1).
 user-facing text that claimed a register. Pair with `gate_source_freshness`
 and `gate_evidence_links`.
 
+---
+
+## Case REVEAL — evidence sufficiency vs relevance-only (arXiv 2608.08612)
+
+**Source:** Track B research (`20260811T041245Z`) —
+[REVEAL: A Rubric-Guided Agent for Explicit Evidence Sufficiency Verification
+in Long-Video Question Answering](https://arxiv.org/abs/2608.08612v1).
+
+**What fails:**
+
+1. Retrieval-augmented agents stop once **semantically relevant** clues appear.
+2. Temporal, causal, or fine-grained action evidence is still missing.
+3. `gate_evidence_links` checks provenance edges, not **rubric sufficiency**.
+4. Claimed answers ship as green without multi-dimension support.
+
+**Product in this repo:**
+
+| Control | API |
+|---------|-----|
+| Bundle type | `EvidenceBundle` |
+| Rubric dims | `DEFAULT_SUFFICIENCY_DIMENSIONS`, `DEEP_SUFFICIENCY_DIMENSIONS` |
+| Analyzer | `analyze_evidence_sufficiency` → `SufficiencyReport` |
+| Gate | `gate_evidence_sufficiency(...)` |
+| Raise form | `assert_evidence_sufficient` |
+
+**Rules (load-bearing):**
+
+- claim answered + empty bundles → **FAIL_LOUD**
+- empty `evidence_ids` → **FAIL**
+- relevance-only (no deep dims) → **FAIL**
+- missing required rubric dimensions → **FAIL**
+- rubric scores below min → **FAIL**
+- multi-dimension sufficient evidence → **PASS**
+
+**Tests:** `tests/test_reveal_sufficiency.py`
+
+**Non-Ornament:** Call `gate_evidence_sufficiency` before accepting
+retrieved-memory answers. Pair with `gate_evidence_links` and
+`gate_source_freshness`.
+
 ## Related farm lessons
 - Writer fixed without tracing readers (cache key bugs)
 - Silent success / vacuous guards
@@ -196,3 +236,4 @@ and `gate_evidence_links`.
 - Activity Frames — compile + refuse LLM-summary memory (this section)
 - Evidence-linked features — refuse unprovenanced engineering (this section)
 - TA-RAG — refuse tone-decoupled RAG answers (this section)
+- REVEAL — refuse relevance-only / insufficient evidence answers (this section)
