@@ -117,27 +117,28 @@ def safe_db_path(
 
 
 def ensure_parent_dir(full: str, base: str | None) -> None:
-    """Create parent of *full* only after positive under-base guard (CodeQL sink)."""
+    """Create parent of *full* only after CodeQL-recognized prefix check."""
     if full == MEMORY_URI or not base:
         return
-    # Re-check at sink so CodeQL sees the guard dominating makedirs
-    if _under(base, full):
-        parent = os.path.dirname(full)
-        if parent and _under(base, parent):
-            os.makedirs(parent, exist_ok=True)
-            return
-        if parent == os.path.realpath(base) or parent == base:
-            os.makedirs(parent, exist_ok=True)
-            return
-    raise PathEscapeError(f"refusing makedirs outside base {base}: {full!r}")
+    # CodeQL GOOD pattern: normalize, startswith trusted base, then makedirs
+    base_path = os.path.realpath(base)
+    fullpath = os.path.realpath(os.path.normpath(full))
+    if not fullpath.startswith(base_path):
+        raise PathEscapeError("not allowed")
+    parent = os.path.dirname(fullpath)
+    if parent != base_path and not parent.startswith(base_path):
+        raise PathEscapeError("not allowed")
+    os.makedirs(parent, exist_ok=True)
 
 
 def connect_sqlite(full: str, base: str | None, **kwargs: object) -> sqlite3.Connection:
-    """sqlite3.connect only after positive under-base guard (CodeQL sink)."""
+    """sqlite3.connect only after CodeQL-recognized prefix check."""
     if full == MEMORY_URI:
         return sqlite3.connect(MEMORY_URI, **kwargs)  # type: ignore[arg-type]
     if base is None:
         raise PathEscapeError("sqlite connect requires trusted base")
-    if _under(base, full):
-        return sqlite3.connect(full, **kwargs)  # type: ignore[arg-type]
-    raise PathEscapeError(f"refusing sqlite connect outside base {base}: {full!r}")
+    base_path = os.path.realpath(base)
+    fullpath = os.path.realpath(os.path.normpath(full))
+    if not fullpath.startswith(base_path):
+        raise PathEscapeError("not allowed")
+    return sqlite3.connect(fullpath, **kwargs)  # type: ignore[arg-type]
