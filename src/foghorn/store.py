@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from foghorn.fact import Decision, Fact, _sha16
+from foghorn.paths import ensure_parent_dir, safe_db_path
 
 
 @dataclass
@@ -129,9 +130,10 @@ class WorldStore:
     """
 
     def __init__(self, path: str | Path) -> None:
-        self.path = Path(path)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._conn = sqlite3.connect(str(self.path))
+        confined = safe_db_path(path, env_var="FOGHORN_DATA_DIR", default_name="facts.db")
+        ensure_parent_dir(confined)
+        self.path = Path(confined)
+        self._conn = sqlite3.connect(confined)
         self._conn.row_factory = sqlite3.Row
         self._conn.executescript(self._SCHEMA)
         self._conn.commit()
