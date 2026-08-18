@@ -6,6 +6,8 @@ clears taint at sinks (makedirs / sqlite connect / open).
 
 from __future__ import annotations
 
+from typing import cast, Any
+
 import os
 import sqlite3
 from pathlib import Path
@@ -131,14 +133,14 @@ def ensure_parent_dir(full: str, base: str | None) -> None:
     os.makedirs(parent, exist_ok=True)
 
 
-def connect_sqlite(full: str, base: str | None, **kwargs: object) -> sqlite3.Connection:
+def connect_sqlite(full: str, base: str | None, **kwargs: Any) -> sqlite3.Connection:
     """sqlite3.connect only after CodeQL-recognized prefix check."""
     if full == MEMORY_URI:
-        return sqlite3.connect(MEMORY_URI, **kwargs)  # type: ignore[arg-type]
+        return cast(sqlite3.Connection, sqlite3.connect(MEMORY_URI, **kwargs))
     if base is None:
         raise PathEscapeError("sqlite connect requires trusted base")
     base_path = os.path.realpath(base)
     fullpath = os.path.realpath(os.path.normpath(full))
     if not fullpath.startswith(base_path):
         raise PathEscapeError("not allowed")
-    return sqlite3.connect(fullpath, **kwargs)  # type: ignore[arg-type]
+    return cast(sqlite3.Connection, sqlite3.connect(fullpath, **kwargs))
