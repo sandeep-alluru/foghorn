@@ -6,11 +6,10 @@ clears taint at sinks (makedirs / sqlite connect / open).
 
 from __future__ import annotations
 
-from typing import cast, Any
-
 import os
 import sqlite3
 from pathlib import Path
+from typing import Any, cast
 
 DEFAULT_DATA_DIR = ".foghorn"
 MEMORY_URI = ":memory:"
