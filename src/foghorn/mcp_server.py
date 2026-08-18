@@ -42,8 +42,13 @@ def run_server() -> None:
     async def list_tools() -> list[_mcp_types.Tool]:
         return [
             _mcp_types.Tool(
-                name="foghorn/list_facts",
-                description="List all facts stored in a foghorn repository.",
+                name="foghorn_list_facts",
+                description=(
+                    "List every fact currently stored in a foghorn world database. "
+                    "Use to inspect what the agent already knows before recording a new "
+                    "decision. Returns subject/predicate/object lines with confidence. "
+                    "Does not mutate state."
+                ),
                 inputSchema={
                     "type": "object",
                     "properties": {
@@ -58,10 +63,12 @@ def run_server() -> None:
                 },
             ),
             _mcp_types.Tool(
-                name="foghorn/record_decision",
+                name="foghorn_record_decision",
                 description=(
-                    "Stage a decision that depends on a set of facts. "
-                    "Call foghorn/commit afterwards to persist it."
+                    "Stage a decision that depends on a set of fact IDs in the foghorn repo. "
+                    "Use after foghorn_list_facts when the agent chooses an action based on "
+                    "known facts. The decision stays staged until foghorn_commit; call that "
+                    "next or the decision will not persist. Do not use for raw fact storage."
                 ),
                 inputSchema={
                     "type": "object",
@@ -90,8 +97,12 @@ def run_server() -> None:
                 },
             ),
             _mcp_types.Tool(
-                name="foghorn/commit",
-                description="Commit all staged facts and decisions to the foghorn repository.",
+                name="foghorn_commit",
+                description=(
+                    "Persist all staged facts and decisions into an immutable foghorn commit. "
+                    "Use after foghorn_record_decision (and any fact staging) to seal the "
+                    "world state with a human-readable message. Fails if nothing is staged."
+                ),
                 inputSchema={
                     "type": "object",
                     "properties": {
@@ -108,10 +119,12 @@ def run_server() -> None:
                 },
             ),
             _mcp_types.Tool(
-                name="foghorn/check_stale",
+                name="foghorn_check_stale",
                 description=(
-                    "Return all decisions that are stale because their upstream facts changed "
-                    "since the previous commit."
+                    "Return decisions whose upstream facts changed since those decisions were "
+                    "committed. Use before acting on an old decision to detect staleness. "
+                    "Read-only; does not repair or recommit — re-decide and foghorn_commit "
+                    "if a decision is stale."
                 ),
                 inputSchema={
                     "type": "object",
@@ -130,7 +143,7 @@ def run_server() -> None:
     async def call_tool(name: str, arguments: dict[str, Any]) -> list[_mcp_types.TextContent]:
         import json
 
-        if name == "foghorn/list_facts":
+        if name == "foghorn_list_facts":
             repo_path = arguments["repo_path"]
             with WorldRepo.init(repo_path) as repo:
                 facts = repo.store.list_facts()
@@ -141,7 +154,7 @@ def run_server() -> None:
             text = "\n".join(lines) if lines else "No facts found."
             return [_mcp_types.TextContent(type="text", text=text)]
 
-        elif name == "foghorn/record_decision":
+        elif name == "foghorn_record_decision":
             repo_path = arguments["repo_path"]
             label = arguments["decision"]
             rationale = arguments["rationale"]
@@ -151,7 +164,7 @@ def run_server() -> None:
             text = f"Staged decision  {d.id}  {d.label}  (depends on {len(d.fact_ids)} facts)"
             return [_mcp_types.TextContent(type="text", text=text)]
 
-        elif name == "foghorn/commit":
+        elif name == "foghorn_commit":
             repo_path = arguments["repo_path"]
             message = arguments["message"]
             with WorldRepo.init(repo_path) as repo:
@@ -165,7 +178,7 @@ def run_server() -> None:
                     text = f"Error: {exc}"
             return [_mcp_types.TextContent(type="text", text=text)]
 
-        elif name == "foghorn/check_stale":
+        elif name == "foghorn_check_stale":
             repo_path = arguments["repo_path"]
             with WorldRepo.init(repo_path) as repo:
                 alerts = repo.stale()

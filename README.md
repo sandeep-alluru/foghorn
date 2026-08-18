@@ -215,7 +215,7 @@ python -m foghorn.mcp_server
 }
 ```
 
-Once connected, Claude can call `foghorn/fact`, `foghorn/decide`, `foghorn/commit`, and `foghorn/stale` as tools. See [docs/mcp.md](docs/mcp.md) for the full tool schema.
+Once connected, Claude can call `foghorn_list_facts`, `foghorn_record_decision`, `foghorn_commit`, and `foghorn_check_stale` as tools. See [docs/mcp.md](docs/mcp.md) for the full tool schema.
 
 ---
 

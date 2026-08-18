@@ -43,7 +43,7 @@ dev = [
     "fastapi>=0.110",
     "httpx>=0.27",
 ]
-mcp = ["mcp>=1.0"]
+mcp = ["mcp>=1.0,<2"]
 docs = [
     "mkdocs>=1.5,<2",
     "mkdocs-material>=9.0,<10",
@@ -89,6 +89,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"**/mcp_server.py" = ["E501"]
 "tests/**" = ["S101", "S105", "S106"]
 "examples/**" = ["S101", "T201"]
 
